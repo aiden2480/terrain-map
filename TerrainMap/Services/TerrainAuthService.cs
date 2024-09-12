@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -15,23 +13,41 @@ public class TerrainAuthService(HttpClient httpClient) : ITerrainAuthService
 {
     const string CognitoUrl = "https://cognito-idp.ap-southeast-2.amazonaws.com";
 
+    const string InitiateAuthHeaderValue = "AWSCognitoIdentityProviderService.InitiateAuth";
+
+    const string ClientId = "6v98tbc09aqfvh52fml3usas3c";
+
     public async Task<LoginApiResponse> AttemptLoginWithCredentials(Branch branch, int memberNumber, string password)
-    {
-        var request = new HttpRequestMessage(HttpMethod.Post, CognitoUrl);
-        var body = new
+        => await MakeRequestToLoginApi(new
         {
-            ClientId = "6v98tbc09aqfvh52fml3usas3c",
+            ClientId,
             AuthFlow = "USER_PASSWORD_AUTH",
             AuthParameters = new
             {
                 USERNAME = $"{branch.ToString().ToLower()}-{memberNumber}",
                 PASSWORD = password
             }
-        };
+        });
 
-        request.Content = new StringContent(JsonSerializer.Serialize(body));
+    public async Task<LoginApiResponse> AttemptLoginWithRefreshToken(string refreshToken)
+        => await MakeRequestToLoginApi(new
+        {
+            ClientId,
+            AuthFlow = "REFRESH_TOKEN_AUTH",
+            AuthParameters = new
+            {
+                REFRESH_TOKEN = refreshToken,
+                DEVICE_KEY = (string)null!
+            }
+        });
+
+    async Task<LoginApiResponse> MakeRequestToLoginApi<TRequestContent>(TRequestContent requestContent)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, CognitoUrl);
+
+        request.Headers.Add("X-amz-target", InitiateAuthHeaderValue);
+        request.Content = new StringContent(JsonSerializer.Serialize(requestContent));
         request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-amz-json-1.1");
-        request.Headers.Add("X-amz-target", "AWSCognitoIdentityProviderService.InitiateAuth");
 
         var response = await httpClient.SendAsync(request);
         var respData = await response.Content.ReadAsStringAsync();
@@ -41,7 +57,7 @@ public class TerrainAuthService(HttpClient httpClient) : ITerrainAuthService
             : ParseUnsuccessfulLogin(respData);
     }
 
-    #region AttemptLoginWithCredentials Helpers
+    #region Helpers
 
     static LoginApiResponse ParseSuccessfulLogin(string respData)
     {
