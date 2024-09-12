@@ -17,7 +17,7 @@ public class TerrainAuthService(HttpClient httpClient) : ITerrainAuthService
 
     const string ClientId = "6v98tbc09aqfvh52fml3usas3c";
 
-    public async Task<LoginApiResponse> AttemptLoginWithCredentials(Branch branch, int memberNumber, string password)
+    public async Task<LoginApiResponse> AttemptLoginWithCredentials(Branch branch, uint memberNumber, string password)
         => await MakeRequestToLoginApi(new
         {
             ClientId,
