@@ -1,0 +1,50 @@
+﻿<h1>Login</h1>
+<p>Please enter your credentials for Scouts Terrain</p>
+<br />
+
+<MudForm @ref="form">
+    <MudSelect Label="Branch"
+               Required="true"
+               RequiredError="Please select your branch"
+               Variant="Variant.Outlined"
+               @bind-Value="selectedBranch">
+
+        @foreach (var branch in Enum.GetValues<Branch>())
+        {
+            <MudSelectItem Value="branch">@branch</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudNumericField Label="Member Number"
+                     Required="true"
+                     RequiredError="Please enter your member number"
+                     HideSpinButtons="true"
+                     Variant="Variant.Outlined"
+                     @bind-Value="memberNumber" />
+
+    <MudTextField Label="Password"
+                  Required="true"
+                  RequiredError="Please enter your password"
+                  InputType="InputType.Password"
+                  Variant="Variant.Outlined"
+                  @bind-Value="password" />
+
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               OnClick="SignIn"
+               Disabled="isLoading"
+               Class="mt-2">
+        <span>Submit</span>
+
+        @if (isLoading)
+        {
+            <MudProgressCircular Class="ml-2"
+                                 Color="Color.Inherit"
+                                 Size="Size.Small"
+                                 Indeterminate="true" />
+        }
+    </MudButton>
+</MudForm>
+<br />
+
+<MudAlert Severity="Severity.Error" hidden="@(errorMessage == string.Empty)">@errorMessage</MudAlert>
