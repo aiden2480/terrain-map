@@ -28,6 +28,7 @@ builder.UseBrowserExtension(browserExtension =>
 // Add services & run
 builder.Services.AddMudServices();
 builder.Services.AddScoped<ITerrainAuthService, TerrainAuthService>();
+builder.Services.AddScoped<ITerrainApiService, TerrainApiService>();
 builder.Services.AddScoped<ILocalAuthService, LocalAuthService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
