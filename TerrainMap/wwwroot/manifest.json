@@ -7,6 +7,9 @@
     "service_worker": "content/BackgroundWorker.js",
     "type": "module"
   },
+  "permissions": [
+    "storage"
+  ],
   "action": {
     "default_popup": "popup.html"
   },
