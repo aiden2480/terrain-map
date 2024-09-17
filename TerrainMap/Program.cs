@@ -6,6 +6,8 @@ using MudBlazor.Services;
 using System;
 using System.Net.Http;
 using TerrainMap;
+using TerrainMap.Services;
+using TerrainMap.Services.Interface;
 
 // Create builder & configure browser extension
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -25,6 +27,8 @@ builder.UseBrowserExtension(browserExtension =>
 
 // Add services & run
 builder.Services.AddMudServices();
+builder.Services.AddScoped<ITerrainAuthService, TerrainAuthService>();
+builder.Services.AddScoped<ILocalAuthService, LocalAuthService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();
