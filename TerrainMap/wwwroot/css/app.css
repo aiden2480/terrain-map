@@ -1,4 +1,11 @@
-﻿html, body {
+﻿body {
+    padding: 15px;
+    min-width: 400px;
+    min-height: 500px;
+    word-break: break-word;
+}
+
+html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
