@@ -1,5 +1,19 @@
 ﻿@page "/popup.html"
 @inherits BasePage
+@inject ILocalAuthService AuthService
 
-<h1>My popup page</h1>
-<MudAlert Severity="Severity.Success">Hello, from MudBlazor</MudAlert>
+@if (isAuthenticated.HasValue && isAuthenticated.Value)
+{
+    <MudAlert Severity="Severity.Success">You are authenticated</MudAlert>
+}
+else if (isAuthenticated.HasValue && !isAuthenticated.Value)
+{
+    <Login OnLoginSuccess="() => isAuthenticated = true" />
+}
+
+@code {
+    private bool? isAuthenticated;
+
+    protected override async Task OnInitializedAsync()
+        => isAuthenticated = await AuthService.IsAuthenticated();
+}
