@@ -47,6 +47,7 @@ public record Submission(
     [property: JsonPropertyName("actioned_by")] IEnumerable<SubmissionActionedBy> ActionedBy);
 
 public record SubmissionActionedBy(
+    [property: JsonPropertyName("member_id")] string Id,
     [property: JsonPropertyName("member_first_name")] string FirstName,
     [property: JsonPropertyName("member_last_name")] string LastName,
     [property: JsonPropertyName("outcome")] string Outcome,

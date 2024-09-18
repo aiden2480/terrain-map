@@ -1,0 +1,54 @@
+﻿<h1>Pending approvals</h1>
+<p>Currently pending for @CurrentProfile.Unit!.Name</p>
+<br />
+
+<style>
+    .center-text-div {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .center-text-div * {
+        text-align: center;
+    }
+
+    .action-buttons-div {
+        display: flex;
+        justify-content: flex-end;
+        gap: 4px;
+    }
+</style>
+
+<MudExpansionPanels Outlined="false" Elevation="4">
+    @foreach (var a in PendingApprovals)
+    {
+        <MudExpansionPanel Text="@GetPanelText(a)" HideIcon="true">
+            <TitleContent>
+                <div class="d-flex">
+                    <MudText Class="mt-1">@GetPanelText(a)</MudText>
+                    <MudIcon Class="d-flex ml-auto" Icon="@Icons.Material.Filled.Star" Color="Color.Default" />
+                </div>
+            </TitleContent>
+
+            <ChildContent>
+                <div class="center-text-div">
+                    <p>Submitted by <b>@a.Member.FirstName @a.Member.LastName</b> on <b>@a.Submission.Date.ToString("ddd d MMM yyyy")</b>.</p>
+                    <p>This submission has <b>@GetApproveCount(a)</b> @PluralApproveText(a) and <b>@GetImproveCount(a)</b> @PluralImproveText(a).</p>
+
+                    @if (AlreadyActionedByCurrentUser(a))
+                    {
+                        <p>You have already actioned this approval.</p>
+                    }
+                </div>
+
+                <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
+
+                <div class="action-buttons-div mt-1">
+                    <MudIconButton Color="Color.Primary" OnClick="() => ImproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Replay" />
+                    <MudIconButton Color="Color.Primary" OnClick="() => ApproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Check" />
+                </div>
+            </ChildContent>
+        </MudExpansionPanel>
+    }
+</MudExpansionPanels>
