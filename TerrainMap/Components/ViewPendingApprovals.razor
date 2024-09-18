@@ -27,7 +27,17 @@
             <TitleContent>
                 <div class="d-flex">
                     <MudText Class="mt-1">@GetPanelText(a)</MudText>
-                    <MudIcon Class="d-flex ml-auto" Icon="@Icons.Material.Filled.Star" Color="Color.Default" />
+
+                    @if (AlreadyActionedByCurrentUser(a))
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" Class="d-flex ml-auto" />
+                    }
+                    else
+                    {
+                        <MudBadge Dot="true" Overlap="true" Bordered="true" Color="Color.Secondary" Class="d-flex ml-auto">
+                            <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" />
+                        </MudBadge>
+                    }
                 </div>
             </TitleContent>
 
