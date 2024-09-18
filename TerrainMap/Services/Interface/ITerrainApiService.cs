@@ -20,4 +20,6 @@ public interface ITerrainApiService
     /// Get all finalised approvals for a particular unit
     /// </summary>
     Task<IEnumerable<Approval>> GetFinalisedApprovals(string unitId);
+
+    string GetApprovalDescription(Approval approval);
 }

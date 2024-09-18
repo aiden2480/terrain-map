@@ -38,7 +38,8 @@ public record Achievement(
 public record AchievementMeta(
     [property: JsonPropertyName("stage")] int Stage,
     [property: JsonPropertyName("stream")] string Stream,
-    [property: JsonPropertyName("branch")] string Branch);
+    [property: JsonPropertyName("branch")] string Branch,
+    [property: JsonPropertyName("sia_area")] string SIAArea);
 
 public record Submission(
     [property: JsonPropertyName("type")] string Type,
