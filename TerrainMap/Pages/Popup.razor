@@ -1,19 +1,27 @@
 ﻿@page "/popup.html"
 @inherits BasePage
 @inject ILocalAuthService AuthService
+@inject ITerrainApiService TerrainApiService
 
-@if (isAuthenticated.HasValue && isAuthenticated.Value)
-{
-    <MudAlert Severity="Severity.Success">You are authenticated</MudAlert>
-}
-else if (isAuthenticated.HasValue && !isAuthenticated.Value)
-{
-    <Login OnLoginSuccess="() => isAuthenticated = true" />
-}
+@popupFragment
 
 @code {
-    private bool? isAuthenticated;
+    private RenderFragment popupFragment = null!;
 
     protected override async Task OnInitializedAsync()
-        => isAuthenticated = await AuthService.IsAuthenticated();
+        => popupFragment = await GetPopupFragment();
+
+    async Task<RenderFragment> GetPopupFragment()
+    {
+        if (!await AuthService.IsAuthenticated())
+        {
+            return @<Login OnLoginSuccess="OnInitializedAsync" />;
+        }
+
+        var profiles = await TerrainApiService.GetProfiles();
+        var profile = profiles.First(p => p.Unit is not null);
+        var pendingApprovals = await TerrainApiService.GetPendingApprovals(profile.Unit!.Id);
+
+        return @<ViewPendingApprovals CurrentProfile="@profile" PendingApprovals="@pendingApprovals" />;
+    }
 }
