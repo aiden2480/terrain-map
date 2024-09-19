@@ -2,24 +2,6 @@
 <p>Currently pending for @CurrentProfile.Unit!.Name</p>
 <br />
 
-<style>
-    .center-text-div {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .center-text-div * {
-        text-align: center;
-    }
-
-    .action-buttons-div {
-        display: flex;
-        justify-content: flex-end;
-        gap: 4px;
-    }
-</style>
-
 <MudExpansionPanels Outlined="false" Elevation="4">
     @foreach (var a in PendingApprovals)
     {
