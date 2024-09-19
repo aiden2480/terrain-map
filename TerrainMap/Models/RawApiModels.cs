@@ -26,11 +26,11 @@ public record Unit(
     [property: JsonPropertyName("section")] string Section);
 
 public record Approval(
-    [property: JsonPropertyName("achievement")] Achievement Achievement,
+    [property: JsonPropertyName("achievement")] ApprovalAchievement Achievement,
     [property: JsonPropertyName("submission")] Submission Submission,
     [property: JsonPropertyName("member")] ApprovalMember Member);
 
-public record Achievement(
+public record ApprovalAchievement(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("type")] string Type,
     [property: JsonPropertyName("achievement_meta")] AchievementMeta Meta);
@@ -55,5 +55,13 @@ public record SubmissionActionedBy(
     [property: JsonPropertyName("comment")] string? Comment);
 
 public record ApprovalMember(
+    [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("first_name")] string FirstName,
     [property: JsonPropertyName("last_name")] string LastName);
+
+public record Achievement(
+    [property: JsonPropertyName("id")] string Id,
+    [property: JsonPropertyName("member_id")] string MemberId,
+    [property: JsonPropertyName("template")] string Template,
+    [property: JsonPropertyName("version")] int Version,
+    [property: JsonPropertyName("answers")] IDictionary<string, object> Answers);

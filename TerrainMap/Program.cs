@@ -29,6 +29,7 @@ builder.UseBrowserExtension(browserExtension =>
 builder.Services
     .AddMudServices()
     .AddScoped<ILocalAuthService, LocalAuthService>()
+    .AddScoped<ITerrainAchievementService, TerrainAchievementService>()
     .AddScoped<ITerrainApiClient, TerrainApiClient>()
     .AddScoped<ITerrainApprovalService, TerrainApprovalService>()
     .AddScoped<ITerrainAuthService, TerrainAuthService>()
