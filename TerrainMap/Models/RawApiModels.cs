@@ -65,3 +65,9 @@ public record Achievement(
     [property: JsonPropertyName("template")] string Template,
     [property: JsonPropertyName("version")] int Version,
     [property: JsonPropertyName("answers")] IDictionary<string, object> Answers);
+
+public record ApprovalInput(
+    [property: JsonPropertyName("id")] string Id,
+    [property: JsonPropertyName("type")] string Type,
+    [property: JsonPropertyName("label")] string Label,
+    [property: JsonPropertyName("dialog_text")] string DialogText);
