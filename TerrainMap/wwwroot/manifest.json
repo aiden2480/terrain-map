@@ -1,7 +1,7 @@
 ﻿{
   "manifest_version": 3,
-  "name": "TerrainMap Extension",
-  "description": "My browser extension built with Blazor WebAssembly",
+  "name": "TerrainMap",
+  "description": "Quickly view & approve Scouts Terrain submissions",
   "version": "0.1",
   "background": {
     "service_worker": "content/BackgroundWorker.js",
@@ -10,6 +10,9 @@
   "permissions": [
     "storage"
   ],
+  "icons": {
+    "128": "icons/128.png"
+  },
   "action": {
     "default_popup": "popup.html"
   },
