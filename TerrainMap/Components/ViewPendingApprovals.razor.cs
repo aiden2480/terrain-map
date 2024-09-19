@@ -12,7 +12,7 @@ namespace TerrainMap.Components;
 public partial class ViewPendingApprovals : ComponentBase
 {
     [Inject]
-    public required ITerrainApiService TerrainApiService { get; set; }
+    public required ITerrainApprovalService TerrainApprovalService { get; set; }
 
     [Inject]
     public required IDialogService DialogService { get; set; }
@@ -26,7 +26,7 @@ public partial class ViewPendingApprovals : ComponentBase
     public required IEnumerable<Approval> PendingApprovals { get; set; }
 
     string GetPanelText(Approval a)
-        => $"{a.Member.FirstName}'s {TerrainApiService.GetApprovalDescription(a)}";
+        => $"{a.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescription(a)}";
 
     static int GetApproveCount(Approval approval)
         => approval.Submission.ActionedBy.Count(a => a.Outcome == "approved");

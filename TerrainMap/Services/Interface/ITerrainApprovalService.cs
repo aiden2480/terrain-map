@@ -4,13 +4,8 @@ using TerrainMap.Models;
 
 namespace TerrainMap.Services.Interface;
 
-public interface ITerrainApiService
+public interface ITerrainApprovalService
 {
-    /// <summary>
-    /// Get all profiles available to the current user
-    /// </summary>
-    Task<IEnumerable<Profile>> GetProfiles();
-
     /// <summary>
     /// Get all pending approvals for a particular unit
     /// </summary>
@@ -21,5 +16,8 @@ public interface ITerrainApiService
     /// </summary>
     Task<IEnumerable<Approval>> GetFinalisedApprovals(string unitId);
 
+    /// <summary>
+    /// Gets the friendly name for an approval
+    /// </summary>
     string GetApprovalDescription(Approval approval);
 }

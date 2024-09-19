@@ -12,28 +12,10 @@ using TerrainMap.Services.Interface;
 
 namespace TerrainMap.Services;
 
-public class TerrainApiService(ITerrainApiClient terrainClient) : ITerrainApiService
+public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainApprovalService
 {
-    const string ProfilesUrl = "https://members.terrain.scouts.com.au/profiles";
     const string PendingApprovalsUrl = "https://achievements.terrain.scouts.com.au/units/{0}/submissions?status=pending";
     const string FinalisedApprovalsUrl = "https://achievements.terrain.scouts.com.au/units/{0}/submissions?status=finalised";
-
-    #region GetProfiles
-
-    public async Task<IEnumerable<Profile>> GetProfiles()
-    {
-        var response = await terrainClient.SendAuthenticatedRequest<GetProfilesResponse>(ProfilesUrl);
-
-        return response.Profiles;
-    }
-
-    record GetProfilesResponse(
-        [property: JsonPropertyName("profiles")] IEnumerable<Profile> Profiles,
-        [property: JsonPropertyName("username")] string Username);
-
-    #endregion
-
-    #region GetApprovals
 
     public async Task<IEnumerable<Approval>> GetPendingApprovals(string unitId)
         => await GetApprovals(PendingApprovalsUrl, unitId);
@@ -49,11 +31,8 @@ public class TerrainApiService(ITerrainApiClient terrainClient) : ITerrainApiSer
         return response.Results;
     }
 
-    record GetApprovalsResponse([property: JsonPropertyName("results")] IEnumerable<Approval> Results);
-
-    #endregion
-
-    #region GetApprovalDescription
+    record GetApprovalsResponse(
+        [property: JsonPropertyName("results")] IEnumerable<Approval> Results);
 
     public string GetApprovalDescription(Approval approval)
         => approval.Achievement.Type switch
@@ -95,6 +74,4 @@ public class TerrainApiService(ITerrainApiClient terrainClient) : ITerrainApiSer
             ? textInfo.ToTitleCase($"{branch} stage {stage}")
             : "Outdoor Adventure Skill";
     }
-
-    #endregion
 }

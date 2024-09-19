@@ -1,7 +1,8 @@
 ﻿@page "/popup.html"
 @inherits BasePage
 @inject ILocalAuthService AuthService
-@inject ITerrainApiService TerrainApiService
+@inject ITerrainApprovalService TerrainApprovalService
+@inject ITerrainProfileService TerrainProfileService
 
 @popupFragment
 
@@ -18,9 +19,9 @@
             return @<Login OnLoginSuccess="OnInitializedAsync" />;
         }
 
-        var profiles = await TerrainApiService.GetProfiles();
+        var profiles = await TerrainProfileService.GetProfiles();
         var profile = profiles.First(p => p.Unit is not null);
-        var pendingApprovals = await TerrainApiService.GetPendingApprovals(profile.Unit!.Id);
+        var pendingApprovals = await TerrainApprovalService.GetPendingApprovals(profile.Unit!.Id);
 
         return @<ViewPendingApprovals CurrentProfile="@profile" PendingApprovals="@pendingApprovals" />;
     }
