@@ -12,7 +12,7 @@ using TerrainMap.Services.Interface;
 
 namespace TerrainMap.Services;
 
-public class TerrainApiService(HttpClient httpClient, ILocalAuthService authService) : ITerrainApiService
+public class TerrainApiService(ITerrainApiClient terrainClient) : ITerrainApiService
 {
     const string ProfilesUrl = "https://members.terrain.scouts.com.au/profiles";
     const string PendingApprovalsUrl = "https://achievements.terrain.scouts.com.au/units/{0}/submissions?status=pending";
@@ -22,7 +22,7 @@ public class TerrainApiService(HttpClient httpClient, ILocalAuthService authServ
 
     public async Task<IEnumerable<Profile>> GetProfiles()
     {
-        var response = await SendAuthenticatedRequest<GetProfilesResponse>(ProfilesUrl);
+        var response = await terrainClient.SendAuthenticatedRequest<GetProfilesResponse>(ProfilesUrl);
 
         return response.Profiles;
     }
@@ -44,7 +44,7 @@ public class TerrainApiService(HttpClient httpClient, ILocalAuthService authServ
     async Task<IEnumerable<Approval>> GetApprovals(string formatUrl, string unitId)
     {
         var url = string.Format(formatUrl, unitId);
-        var response = await SendAuthenticatedRequest<GetApprovalsResponse>(url);
+        var response = await terrainClient.SendAuthenticatedRequest<GetApprovalsResponse>(url);
 
         return response.Results;
     }
@@ -97,24 +97,4 @@ public class TerrainApiService(HttpClient httpClient, ILocalAuthService authServ
     }
 
     #endregion
-
-    async Task<TResult> SendAuthenticatedRequest<TResult>(string url)
-    {
-        var request = await GetAuthenticatedRequest(url, HttpMethod.Get);
-        var response = await httpClient.SendAsync(request);
-        var responseText = await response.Content.ReadAsStringAsync();
-        var responseParsed = JsonSerializer.Deserialize<TResult>(responseText);
-
-        Debug.Assert(responseParsed is not null);
-        return responseParsed;
-    }
-
-    async Task<HttpRequestMessage> GetAuthenticatedRequest(string url, HttpMethod method)
-    {
-        var request = new HttpRequestMessage(method, url);
-        var idToken = await authService.GetIdToken();
-
-        request.Headers.Authorization = new AuthenticationHeaderValue(idToken);
-        return request;
-    }
 }
