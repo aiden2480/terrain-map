@@ -9,6 +9,10 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.mud-checkbox.mud-disabled {
+    cursor: unset;
+}
+
 h1:focus {
     outline: none;
 }
