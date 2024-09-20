@@ -64,7 +64,7 @@ public record Achievement(
     [property: JsonPropertyName("member_id")] string MemberId,
     [property: JsonPropertyName("template")] string Template,
     [property: JsonPropertyName("version")] int Version,
-    [property: JsonPropertyName("answers")] IDictionary<string, object> Answers);
+    [property: JsonPropertyName("answers")] IReadOnlyDictionary<string, object> Answers);
 
 public record ApprovalInput(
     [property: JsonPropertyName("id")] string Id,

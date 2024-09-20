@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
-using System.Net.Http.Headers;
+﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TerrainMap.Services.Interface;
@@ -14,10 +14,28 @@ public class TerrainApiClient(HttpClient httpClient, ILocalAuthService authServi
         var request = await GetAuthenticatedRequest(url);
         var response = await httpClient.SendAsync(request);
         var responseText = await response.Content.ReadAsStringAsync();
-        var responseParsed = JsonSerializer.Deserialize<TResult>(responseText);
+        var responseParsed = TryParseResponse<TResult>(responseText);
 
-        Debug.Assert(responseParsed is not null);
         return responseParsed;
+    }
+
+    static TResult TryParseResponse<TResult>(string responseText)
+    {
+        try
+        {
+            var responseParsed = JsonSerializer.Deserialize<TResult>(responseText);
+            ArgumentNullException.ThrowIfNull(responseParsed, nameof(responseParsed));
+
+            return responseParsed;
+        }
+        catch (Exception ex) when (ex is JsonException || ex is ArgumentNullException)
+        {
+            throw new ArgumentException($@"Error occured whilst attempting deserialisation
+Attempt deserialise to type: {typeof(TResult)}
+Exception type: {ex.GetType()}
+Exception message: {ex.Message}
+Serialised text: {responseText}");
+        }
     }
 
     async Task<HttpRequestMessage> GetAuthenticatedRequest(string url)
