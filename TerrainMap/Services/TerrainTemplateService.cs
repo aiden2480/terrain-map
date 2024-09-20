@@ -11,18 +11,26 @@ public class TerrainTemplateService(ITerrainApiClient terrainClient) : ITerrainT
 {
     const string TemplatesUrl = "https://templates.terrain.scouts.com.au/{0}/{1}.json";
 
-    public async Task<IEnumerable<ApprovalInput>> GetInputs(string templateId, int templateVersion)
+    public async Task<Dictionary<string, ApprovalInput>> GetInputs(string templateId, int templateVersion)
     {
         var url = string.Format(TemplatesUrl, templateId, templateVersion);
         var response = await terrainClient.SendAuthenticatedRequest<TemplateApiResponse>(url);
 
-        return response.Document.InputGroups.SelectMany(i => i.Inputs);
+        return response.Document
+            .SelectMany(d => d.InputGroups)
+            .SelectMany(i => i.Inputs)
+            .Where(i => i.Type != "file_uploader")
+            .Where(i => i.Id != "logbook_up_to_date")
+            .ToDictionary(i => i.Id, i => i);
     }
 
-    record TemplateApiResponse(
-        [property: JsonPropertyName("document")] Document Document);
+    public async Task<Dictionary<string, ApprovalInput>> GetInputs(Achievement achievement)
+        => await GetInputs(achievement.Template, achievement.Version);
 
-    record Document(
+    record TemplateApiResponse(
+        [property: JsonPropertyName("document")] IEnumerable<DocumentItem> Document);
+
+    record DocumentItem(
         [property: JsonPropertyName("input_groups")] IEnumerable<InputGroup> InputGroups);
 
     record InputGroup(
