@@ -11,21 +11,38 @@ namespace TerrainMap.Components;
 
 public partial class ViewPendingApprovals : ComponentBase
 {
-    [Inject]
-    public required ITerrainApprovalService TerrainApprovalService { get; set; }
+    [Inject] public required ITerrainApprovalService TerrainApprovalService { get; set; }
 
-    [Inject]
-    public required IDialogService DialogService { get; set; }
+    [Inject] public required ITerrainAchievementService TerrainAchievementService { get; set; }
 
-    [Parameter]
-    [EditorRequired]
-    public required Profile CurrentProfile { get; set; }
+    [Inject] public required ITerrainTemplateService TerrainTemplateService { get; set; }
 
-    [Parameter]
-    [EditorRequired]
-    public required IEnumerable<Approval> PendingApprovals { get; set; }
+    [Inject] public required IDialogService DialogService { get; set; }
+
+    [Parameter, EditorRequired] public required Profile CurrentProfile { get; set; }
+
+    [Parameter, EditorRequired] public required IEnumerable<Approval> PendingApprovals { get; set; }
 
     private string comment = string.Empty;
+
+    private IList<ApprovalPanel> Panels = default!;
+
+    protected override void OnInitialized()
+    {
+        Panels = PendingApprovals.Select(a => new ApprovalPanel
+        {
+            Approval = a,
+        }).ToList();
+    }
+
+    async Task ExpandedChanged(ApprovalPanel panel, bool isOpen)
+    {
+        if (isOpen && !panel.DataIsLoaded)
+        {
+            panel.Achievement = await TerrainAchievementService.GetAchievement(panel.Approval);
+            panel.Inputs = await TerrainTemplateService.GetInputs(panel.Achievement);
+        }
+    }
 
     string GetPanelText(Approval a)
         => $"{a.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescription(a)}";
@@ -65,5 +82,16 @@ public partial class ViewPendingApprovals : ComponentBase
         var result = await dialog.Result;
 
         return !result!.Canceled;
+    }
+
+    class ApprovalPanel
+    {
+        public required Approval Approval { get; init; }
+
+        public Achievement Achievement = null!;
+
+        public Dictionary<string, ApprovalInput> Inputs = [];
+
+        public bool DataIsLoaded => Achievement is not null;
     }
 }

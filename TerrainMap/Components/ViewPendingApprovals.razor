@@ -3,14 +3,14 @@
 <br />
 
 <MudExpansionPanels Outlined="false" Elevation="4">
-    @foreach (var a in PendingApprovals)
+    @foreach (var panel in Panels)
     {
-        <MudExpansionPanel Text="@GetPanelText(a)" HideIcon="true">
+        <MudExpansionPanel Text="@GetPanelText(panel.Approval)" ExpandedChanged="async (open) => await ExpandedChanged(panel, open)" HideIcon="true">
             <TitleContent>
                 <div class="d-flex">
-                    <MudText Class="mt-1">@GetPanelText(a)</MudText>
+                    <MudText Class="mt-1">@GetPanelText(panel.Approval)</MudText>
 
-                    @if (AlreadyActionedByCurrentUser(a))
+                    @if (AlreadyActionedByCurrentUser(panel.Approval))
                     {
                         <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" Class="d-flex ml-auto" />
                     }
@@ -24,24 +24,86 @@
             </TitleContent>
 
             <ChildContent>
-                <div class="center-text-div">
-                    <p>Submitted by <b>@a.Member.FirstName @a.Member.LastName</b> on <b>@a.Submission.Date.ToString("ddd d MMM yyyy")</b>.</p>
-                    <p>This submission has <b>@GetApproveCount(a)</b> @PluralApproveText(a) and <b>@GetImproveCount(a)</b> @PluralImproveText(a).</p>
+                @if (panel.DataIsLoaded)
+                {
+                    <div class="center-text-div">
+                        <p>Submitted by <b>@panel.Approval.Member.FirstName @panel.Approval.Member.LastName</b> on <b>@panel.Approval.Submission.Date.ToString("ddd d MMM yyyy")</b>.</p>
+                        <p>This submission has <b>@GetApproveCount(panel.Approval)</b> @PluralApproveText(panel.Approval) and <b>@GetImproveCount(panel.Approval)</b> @PluralImproveText(panel.Approval).</p>
 
-                    @if (AlreadyActionedByCurrentUser(a))
+                        @if (AlreadyActionedByCurrentUser(panel.Approval))
+                        {
+                            <p>You have already actioned this approval.</p>
+                        }
+                    </div>
+
+                    <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
+
+                    @foreach (var inputKvp in panel.Inputs)
                     {
-                        <p>You have already actioned this approval.</p>
+                        <MudTooltip Text="@inputKvp.Value.DialogText" Arrow="true" Placement="Placement.Top" Delay="750">
+                            <MudText><b>@inputKvp.Value.Label</b></MudText>
+                        </MudTooltip>
+
+                        <div class="mb-2">
+                            @GetRenderFragment(panel, inputKvp.Value)
+                        </div>
                     }
-                </div>
 
-                <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
-
-                <div class="action-buttons-div mt-1">
+                    <div class="action-buttons-div mt-1">
                         <MudTextField T="string" Label="Add optional comment" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" Immediate="true" @bind-Value="comment" />
-                        <MudIconButton Color="Color.Primary" OnClick="() => ImproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Replay" />
-                        <MudIconButton Color="Color.Primary" OnClick="() => ApproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Check" />
-                </div>
+                        <MudIconButton Color="Color.Primary" OnClick="() => ImproveDialog(panel.Approval)" Disabled="AlreadyActionedByCurrentUser(panel.Approval)" Icon="@Icons.Material.Filled.Replay" />
+                        <MudIconButton Color="Color.Primary" OnClick="() => ApproveDialog(panel.Approval)" Disabled="AlreadyActionedByCurrentUser(panel.Approval)" Icon="@Icons.Material.Filled.Check" />
+                    </div>
+                }
+                else
+                {
+                    // Data is loaded by ExpandedChanged, this is displayed in the interim
+                    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+                }
             </ChildContent>
         </MudExpansionPanel>
     }
 </MudExpansionPanels>
+
+@code {
+    RenderFragment GetRenderFragment(ApprovalPanel panel, ApprovalInput input)
+    {
+        var answer = panel.Achievement.Answers.GetValueOrDefault(input.Id);
+
+        if (answer is null)
+        {
+            return @<MudText><i>No response provided</i></MudText>;
+        }
+
+        return input.Type switch
+        {
+            "text_input" => TextInput(answer.ToString()!),
+            "checkbox" => VerifiableCheckbox(),
+            "verifiable_checkbox" => VerifiableCheckbox(),
+            "radio" => Radio(input.Selections!, answer.ToString()!),
+            "single_tab_selector" => SingleTabSelector(input.Selections!, answer.ToString()!),
+
+            _ => UnknownInputType(input.Type)
+        };
+    }
+
+    RenderFragment TextInput(string answer)
+        => @<MudText>@answer</MudText>;
+
+    RenderFragment VerifiableCheckbox()
+        => @<MudCheckBox Disabled="true" Value="true" Label="Requirement marked as fulfilled" Size="Size.Small" />;
+
+    RenderFragment UnknownInputType(string inputType)
+        => @<MudText><i>Unknown input type @inputType</i></MudText>;
+
+    RenderFragment Radio(IEnumerable<ApprovalInputSelection> selections, string answer)
+        => @<MudRadioGroup Value="answer">
+            @foreach (var answer in selections)
+            {
+                <MudRadio Value="@answer.Id" Disabled="true">@answer.Title</MudRadio>
+            }
+        </MudRadioGroup>;
+
+    RenderFragment SingleTabSelector(IEnumerable<ApprovalInputSelection> selections, string answer)
+        => TextInput(selections.Single(s => s.Id == answer).Title);
+}
