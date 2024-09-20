@@ -37,8 +37,9 @@
                 <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
 
                 <div class="action-buttons-div mt-1">
-                    <MudIconButton Color="Color.Primary" OnClick="() => ImproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Replay" />
-                    <MudIconButton Color="Color.Primary" OnClick="() => ApproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Check" />
+                        <MudTextField T="string" Label="Add optional comment" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" Immediate="true" @bind-Value="comment" />
+                        <MudIconButton Color="Color.Primary" OnClick="() => ImproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Replay" />
+                        <MudIconButton Color="Color.Primary" OnClick="() => ApproveDialog(a)" Disabled="AlreadyActionedByCurrentUser(a)" Icon="@Icons.Material.Filled.Check" />
                 </div>
             </ChildContent>
         </MudExpansionPanel>

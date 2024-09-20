@@ -25,6 +25,8 @@ public partial class ViewPendingApprovals : ComponentBase
     [EditorRequired]
     public required IEnumerable<Approval> PendingApprovals { get; set; }
 
+    private string comment = string.Empty;
+
     string GetPanelText(Approval a)
         => $"{a.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescription(a)}";
 
@@ -46,22 +48,22 @@ public partial class ViewPendingApprovals : ComponentBase
             .Contains(CurrentProfile.Member.Id);
 
     async Task ApproveDialog(Approval approval)
-        => await ShowApprovalCommentDialog($"Approve {GetPanelText(approval)}?", true);
+        => Console.WriteLine(await ShowApprovalCommentDialog($"Approve {GetPanelText(approval)}?", true));
 
-    async Task<string?> ImproveDialog(Approval approval)
-        => await ShowApprovalCommentDialog($"Reject {GetPanelText(approval)}?", false); 
+    async Task ImproveDialog(Approval approval)
+        => Console.WriteLine(await ShowApprovalCommentDialog($"Improve {GetPanelText(approval)}?", false)); 
 
-    async Task<string?> ShowApprovalCommentDialog(string title, bool isApproval)
+    async Task<bool> ShowApprovalCommentDialog(string title, bool isApproval)
     {
         var parameters = new DialogParameters<ApprovalCommentDialog>
         {
-            { d => d.IsApproval, isApproval }
+            { d => d.IsApproval, isApproval },
+            { d => d.Comment, comment }
         };
 
         var dialog = await DialogService.ShowAsync<ApprovalCommentDialog>(title, parameters);
         var result = await dialog.Result;
-        var comment = result?.Data as string;
 
-        return string.IsNullOrWhiteSpace(comment) ? null : comment;
+        return !result!.Canceled;
     }
 }

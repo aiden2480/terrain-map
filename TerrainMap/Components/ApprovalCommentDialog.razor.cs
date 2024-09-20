@@ -12,16 +12,23 @@ public partial class ApprovalCommentDialog : ComponentBase
     [EditorRequired]
     public required bool IsApproval { get; init; }
 
-    private string comment = string.Empty;
+    [Parameter]
+    [EditorRequired]
+    public required string? Comment { get; init; }
+
+    private string DialogContent
+        => !string.IsNullOrWhiteSpace(Comment)
+            ? $"{ActionVerb} with comment \"{Comment}\"?"
+            : $"{ActionVerb} without comment?";
     
-    private string SubmitText
+    private string ActionVerb
         => IsApproval ? "Approve" : "Improve";
 
     private Color SubmitColor
         => IsApproval ? Color.Primary : Color.Secondary;
 
     private void Submit()
-        => Dialog.Close(comment);
+        => Dialog.Close();
 
     private void Cancel()
         => Dialog.Cancel();

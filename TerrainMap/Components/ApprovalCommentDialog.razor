@@ -1,9 +1,9 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudTextField @bind-Value="comment" Label="Enter comment (optional)" />
+        <MudText>@DialogContent</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton OnClick="Submit" Color="@SubmitColor">@SubmitText</MudButton>
+        <MudButton OnClick="Submit" Color="@SubmitColor">@ActionVerb</MudButton>
     </DialogActions>
 </MudDialog>
