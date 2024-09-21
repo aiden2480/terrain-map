@@ -11,11 +11,15 @@ public interface ITerrainApiClient
     /// <typeparam name="TResult">The object type to deserialise the response to</typeparam>
     /// <param name="url">The fully qualified endpoint url</param>
     /// <returns>The deserialised response</returns>
-    Task<TResult> SendAuthenticatedRequest<TResult>(string url);
+    Task<TResult> SendGet<TResult>(string url);
 
     /// <summary>
-    /// Send a <paramref name="method"/> request to the nominated endpoint which has been authenticated with the Id token.
-    /// Otherwise same as <see cref="SendAuthenticatedRequest{TResult}(string)"/>
+    /// Send a POST request to the nominated endpoint which has been authenticated with the Id token
     /// </summary>
-    Task<TResult> SendAuthenticatedRequest<TResult>(string url, HttpMethod method);
+    /// <typeparam name="TContent">The content type</typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="url">The fully qualified endpoint url</param>
+    /// <param name="content">The content which will be serialised into the content field of the request</param>
+    /// <returns>The deserialised response</returns>
+    Task<TResult> SendPost<TContent, TResult>(string url, TContent content);
 }

@@ -14,7 +14,7 @@ public class TerrainTemplateService(ITerrainApiClient terrainClient) : ITerrainT
     async Task<IEnumerable<ApprovalInput>> GetInputs(string templateId, int templateVersion)
     {
         var url = string.Format(TemplatesUrl, templateId, templateVersion);
-        var response = await terrainClient.SendAuthenticatedRequest<TemplateApiResponse>(url);
+        var response = await terrainClient.SendGet<TemplateApiResponse>(url);
 
         return response.Document
             .SelectMany(d => d.InputGroups)

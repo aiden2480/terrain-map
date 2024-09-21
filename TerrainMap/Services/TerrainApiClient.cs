@@ -9,17 +9,21 @@ namespace TerrainMap.Services;
 
 public class TerrainApiClient(HttpClient httpClient, ILocalAuthService authService) : ITerrainApiClient
 {
-    public async Task<TResult> SendAuthenticatedRequest<TResult>(string url)
-        => await SendAuthenticatedRequest<TResult>(url, HttpMethod.Get);
-
-    public async Task<TResult> SendAuthenticatedRequest<TResult>(string url, HttpMethod method)
+    public async Task<TResult> SendGet<TResult>(string url)
     {
-        var request = await GetAuthenticatedRequest(url, method);
-        var response = await httpClient.SendAsync(request);
-        var responseText = await response.Content.ReadAsStringAsync();
-        var responseParsed = TryParseResponse<TResult>(responseText);
+        var request = await GetAuthenticatedRequest(url, HttpMethod.Get);
+        var response = await SendAuthenticatedRequest<TResult>(request);
 
-        return responseParsed;
+        return response;
+    }
+
+    public async Task<TResult> SendPost<TContent, TResult>(string url, TContent content)
+    {
+        var request = await GetAuthenticatedRequest(url, HttpMethod.Post);
+        request.Content = new StringContent(JsonSerializer.Serialize(content));
+        var response = await SendAuthenticatedRequest<TResult>(request);
+
+        return response;
     }
 
     async Task<HttpRequestMessage> GetAuthenticatedRequest(string url, HttpMethod method)
@@ -29,6 +33,15 @@ public class TerrainApiClient(HttpClient httpClient, ILocalAuthService authServi
 
         request.Headers.Authorization = new AuthenticationHeaderValue(idToken);
         return request;
+    }
+
+    async Task<TResult> SendAuthenticatedRequest<TResult>(HttpRequestMessage request)
+    {
+        var response = await httpClient.SendAsync(request);
+        var responseText = await response.Content.ReadAsStringAsync();
+        var responseParsed = TryParseResponse<TResult>(responseText);
+
+        return responseParsed;
     }
 
     static TResult TryParseResponse<TResult>(string responseText)

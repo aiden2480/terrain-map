@@ -12,7 +12,7 @@ public class TerrainProfileService(ITerrainApiClient terrainClient) : ITerrainPr
 
     public async Task<IEnumerable<Profile>> GetProfiles()
     {
-        var response = await terrainClient.SendAuthenticatedRequest<GetProfilesResponse>(ProfilesUrl);
+        var response = await terrainClient.SendGet<GetProfilesResponse>(ProfilesUrl);
 
         return response.Profiles;
     }

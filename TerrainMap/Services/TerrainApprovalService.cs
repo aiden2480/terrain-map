@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TerrainMap.Models;
@@ -26,7 +21,7 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
     async Task<IEnumerable<Approval>> GetApprovals(string formatUrl, string unitId)
     {
         var url = string.Format(formatUrl, unitId);
-        var response = await terrainClient.SendAuthenticatedRequest<GetApprovalsResponse>(url);
+        var response = await terrainClient.SendGet<GetApprovalsResponse>(url);
 
         return response.Results;
     }
