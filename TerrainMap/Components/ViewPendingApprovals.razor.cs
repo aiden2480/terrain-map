@@ -29,10 +29,12 @@ public partial class ViewPendingApprovals : ComponentBase
 
     protected override void OnInitialized()
     {
-        Panels = PendingApprovals.Select(a => new ApprovalPanel
-        {
-            Approval = a,
-        }).ToList();
+        Panels = PendingApprovals
+            .Where(a => a.Submission.Type != "award") // TODO can handle awards separately later
+            .Select(a => new ApprovalPanel
+            {
+                Approval = a,
+            }).ToList();
     }
 
     async Task ExpandedChanged(ApprovalPanel panel, bool isOpen)
