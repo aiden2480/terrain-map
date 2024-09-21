@@ -8,7 +8,7 @@ public class TerrainAchievementService(ITerrainApiClient terrainApi) : ITerrainA
 {
     const string GetAchievementUrl = "https://achievements.terrain.scouts.com.au/members/{0}/achievements/{1}";
 
-    public async Task<Achievement> GetAchievement(string memberId, string achievementId)
+    async Task<Achievement> GetAchievement(string memberId, string achievementId)
     {
         var url = string.Format(GetAchievementUrl, memberId, achievementId);
         var response = await terrainApi.SendAuthenticatedRequest<Achievement>(url);
