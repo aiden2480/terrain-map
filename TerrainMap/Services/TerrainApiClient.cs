@@ -10,13 +10,25 @@ namespace TerrainMap.Services;
 public class TerrainApiClient(HttpClient httpClient, ILocalAuthService authService) : ITerrainApiClient
 {
     public async Task<TResult> SendAuthenticatedRequest<TResult>(string url)
+        => await SendAuthenticatedRequest<TResult>(url, HttpMethod.Get);
+
+    public async Task<TResult> SendAuthenticatedRequest<TResult>(string url, HttpMethod method)
     {
-        var request = await GetAuthenticatedRequest(url);
+        var request = await GetAuthenticatedRequest(url, method);
         var response = await httpClient.SendAsync(request);
         var responseText = await response.Content.ReadAsStringAsync();
         var responseParsed = TryParseResponse<TResult>(responseText);
 
         return responseParsed;
+    }
+
+    async Task<HttpRequestMessage> GetAuthenticatedRequest(string url, HttpMethod method)
+    {
+        var request = new HttpRequestMessage(method, url);
+        var idToken = await authService.GetIdToken();
+
+        request.Headers.Authorization = new AuthenticationHeaderValue(idToken);
+        return request;
     }
 
     static TResult TryParseResponse<TResult>(string responseText)
@@ -36,14 +48,5 @@ Exception type: {ex.GetType()}
 Exception message: {ex.Message}
 Serialised text: {responseText}");
         }
-    }
-
-    async Task<HttpRequestMessage> GetAuthenticatedRequest(string url)
-    {
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
-        var idToken = await authService.GetIdToken();
-
-        request.Headers.Authorization = new AuthenticationHeaderValue(idToken);
-        return request;
     }
 }

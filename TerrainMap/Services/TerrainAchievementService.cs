@@ -18,4 +18,14 @@ public class TerrainAchievementService(ITerrainApiClient terrainApi) : ITerrainA
 
     public async Task<Achievement> GetAchievement(Approval approval)
         => await GetAchievement(approval.Member.Id, approval.Achievement.Id);
+
+    public async Task ApproveAchievement(Achievement achievement, string comment)
+        => await ActionAchievement(achievement, "approved", comment);
+
+    public async Task ImproveAchievement(Achievement achievement, string comment)
+        => await ActionAchievement(achievement, "rejected", comment);
+
+    async Task ActionAchievement(Achievement achievement, string outcome, string comment)
+    {
+    }
 }
