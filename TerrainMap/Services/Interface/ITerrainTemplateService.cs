@@ -6,7 +6,5 @@ namespace TerrainMap.Services.Interface;
 
 public interface ITerrainTemplateService
 {
-    Task<Dictionary<string, ApprovalInput>> GetInputs(string templateId, int templateVersion);
-
-    Task<Dictionary<string, ApprovalInput>> GetInputs(Achievement achievement);
+    Task<IEnumerable<ApprovalInput>> GetInputs(Achievement achievement);
 }

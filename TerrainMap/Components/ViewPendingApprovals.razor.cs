@@ -90,7 +90,7 @@ public partial class ViewPendingApprovals : ComponentBase
 
         public Achievement Achievement = null!;
 
-        public Dictionary<string, ApprovalInput> Inputs = [];
+        public IEnumerable<ApprovalInput> Inputs = [];
 
         public bool DataIsLoaded => Achievement is not null;
     }

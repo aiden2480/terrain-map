@@ -38,14 +38,14 @@
 
                     <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
 
-                    @foreach (var inputKvp in panel.Inputs)
+                    @foreach (var input in panel.Inputs)
                     {
-                        <MudTooltip Text="@inputKvp.Value.DialogText" Arrow="true" Placement="Placement.Top" Delay="750">
-                            <MudText><b>@inputKvp.Value.Label</b></MudText>
+                        <MudTooltip Text="@input.DialogText" Arrow="true" Placement="Placement.Top" Delay="750">
+                            <MudText><b>@input.Label</b></MudText>
                         </MudTooltip>
 
                         <div class="mb-2">
-                            @GetRenderFragment(panel, inputKvp.Value)
+                            @GetRenderFragment(panel, input)
                         </div>
                     }
 

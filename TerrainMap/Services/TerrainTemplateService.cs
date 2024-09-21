@@ -11,7 +11,7 @@ public class TerrainTemplateService(ITerrainApiClient terrainClient) : ITerrainT
 {
     const string TemplatesUrl = "https://templates.terrain.scouts.com.au/{0}/{1}.json";
 
-    public async Task<Dictionary<string, ApprovalInput>> GetInputs(string templateId, int templateVersion)
+    async Task<IEnumerable<ApprovalInput>> GetInputs(string templateId, int templateVersion)
     {
         var url = string.Format(TemplatesUrl, templateId, templateVersion);
         var response = await terrainClient.SendAuthenticatedRequest<TemplateApiResponse>(url);
@@ -20,11 +20,10 @@ public class TerrainTemplateService(ITerrainApiClient terrainClient) : ITerrainT
             .SelectMany(d => d.InputGroups)
             .SelectMany(i => i.Inputs)
             .Where(i => i.Type != "file_uploader")
-            .Where(i => i.Id != "logbook_up_to_date")
-            .ToDictionary(i => i.Id, i => i);
+            .Where(i => i.Id != "logbook_up_to_date");
     }
 
-    public async Task<Dictionary<string, ApprovalInput>> GetInputs(Achievement achievement)
+    public async Task<IEnumerable<ApprovalInput>> GetInputs(Achievement achievement)
         => await GetInputs(achievement.Template, achievement.Version);
 
     record TemplateApiResponse(
