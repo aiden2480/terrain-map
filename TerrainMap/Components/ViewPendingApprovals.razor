@@ -29,11 +29,6 @@
                     <div class="center-text-div">
                         <p>Submitted by <b>@panel.Approval.Member.FirstName @panel.Approval.Member.LastName</b> on <b>@panel.Approval.Submission.Date.ToString("ddd d MMM yyyy")</b>.</p>
                         <p>This submission has <b>@GetApproveCount(panel.Approval)</b> @PluralApproveText(panel.Approval) and <b>@GetImproveCount(panel.Approval)</b> @PluralImproveText(panel.Approval).</p>
-
-                        @if (AlreadyActionedByCurrentUser(panel.Approval))
-                        {
-                            <p>You have already actioned this approval.</p>
-                        }
                     </div>
 
                     <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
@@ -49,11 +44,30 @@
                         </div>
                     }
 
-                    <div class="action-buttons-div mt-1">
-                        <MudTextField T="string" Label="Add optional comment" Variant="Variant.Outlined" Margin="Margin.Dense" Clearable="true" Immediate="true" @bind-Value="comment" />
-                        <MudIconButton Color="Color.Primary" OnClick="() => ImproveDialog(panel.Approval)" Disabled="AlreadyActionedByCurrentUser(panel.Approval)" Icon="@Icons.Material.Filled.Replay" />
-                        <MudIconButton Color="Color.Primary" OnClick="() => ApproveDialog(panel.Approval)" Disabled="AlreadyActionedByCurrentUser(panel.Approval)" Icon="@Icons.Material.Filled.Check" />
-                    </div>
+                    if (!AlreadyActionedByCurrentUser(panel.Approval))
+                    {
+                        <div class="action-buttons-div mt-1">
+                            <MudTextField Label="Add optional comment"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          Clearable="true"
+                                          Immediate="true"
+                                          @bind-Value="comment" />
+
+                            <MudIconButton Color="Color.Primary"
+                                           OnClick="() => ImproveDialog(panel.Approval)"
+                                           Icon="@Icons.Material.Filled.Replay" />
+
+                            <MudIconButton Color="Color.Primary"
+                                           OnClick="() => ApproveDialog(panel.Approval)"
+                                           Icon="@Icons.Material.Filled.Check" />
+                        </div>
+                    }
+                    else
+                    {
+                        <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
+                        <MudText Style="text-align: center"><i>You have already actioned this approval</i></MudText>
+                    }
                 }
                 else
                 {
