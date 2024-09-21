@@ -10,15 +10,15 @@
                 <div class="d-flex">
                     <MudText Class="mt-1">@GetPanelText(panel.Approval)</MudText>
 
-                    @if (AlreadyActionedByCurrentUser(panel.Approval))
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" Class="d-flex ml-auto" />
-                    }
-                    else
+                    @if (CanActionApproval(panel.Approval))
                     {
                         <MudBadge Dot="true" Overlap="true" Bordered="true" Color="Color.Secondary" Class="d-flex ml-auto">
                             <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" />
                         </MudBadge>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" Class="d-flex ml-auto" />
                     }
                 </div>
             </TitleContent>
@@ -44,7 +44,7 @@
                         </div>
                     }
 
-                    if (!AlreadyActionedByCurrentUser(panel.Approval))
+                    if (CanActionApproval(panel.Approval))
                     {
                         <div class="action-buttons-div mt-1">
                             <MudTextField Label="Add optional comment"
@@ -55,15 +55,20 @@
                                           @bind-Value="comment" />
 
                             <MudIconButton Color="Color.Primary"
-                                           OnClick="() => ImproveDialog(panel.Approval)"
+                                           OnClick="() => ImproveAchievement(panel)"
                                            Icon="@Icons.Material.Filled.Replay" />
 
                             <MudIconButton Color="Color.Primary"
-                                           OnClick="() => ApproveDialog(panel.Approval)"
+                                           OnClick="() => ApproveAchievement(panel)"
                                            Icon="@Icons.Material.Filled.Check" />
                         </div>
                     }
-                    else
+                    else if (SubmittedByCurrentUser(panel.Approval))
+                    {
+                        <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
+                        <MudText Style="text-align: center"><i>You cannot action your own approval</i></MudText>
+                    }
+                    else if (AlreadyActionedByCurrentUser(panel.Approval))
                     {
                         <MudDivider DividerType="DividerType.Middle" Class="mt-2 mb-2" />
                         <MudText Style="text-align: center"><i>You have already actioned this approval</i></MudText>

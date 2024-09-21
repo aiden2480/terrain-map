@@ -39,8 +39,7 @@ public partial class ViewPendingApprovals : ComponentBase
     {
         if (isOpen && !panel.DataIsLoaded)
         {
-            panel.Achievement = await TerrainAchievementService.GetAchievement(panel.Approval);
-            panel.Inputs = await TerrainTemplateService.GetInputs(panel.Achievement);
+            await panel.LoadData(TerrainAchievementService, TerrainTemplateService);
         }
     }
 
@@ -59,24 +58,50 @@ public partial class ViewPendingApprovals : ComponentBase
     static string PluralImproveText(Approval approval)
         => GetImproveCount(approval) == 1 ? "improve" : "improves";
 
+    bool CanActionApproval(Approval approval)
+        => !SubmittedByCurrentUser(approval) && !AlreadyActionedByCurrentUser(approval);
+
+    bool SubmittedByCurrentUser(Approval approval)
+        => approval.Member.Id == CurrentProfile.Member.Id;
+
     bool AlreadyActionedByCurrentUser(Approval approval)
         => approval.Submission.ActionedBy
             .Select(a => a.Id)
             .Contains(CurrentProfile.Member.Id);
+     
+    async Task ApproveAchievement(ApprovalPanel panel)
+    {
+        var continueAction = await ShowCommentDialog(panel.Approval, true);
 
-    async Task ApproveDialog(Approval approval)
-        => Console.WriteLine(await ShowApprovalCommentDialog($"Approve {GetPanelText(approval)}?", true));
+        if (continueAction)
+        {
+            await TerrainAchievementService.ApproveSubmission(panel.Approval.Submission, comment);
+            panel.Approval = await TerrainApprovalService.RefreshApproval(CurrentProfile.Unit!.Id, panel.Approval);
+        }
+    }
 
-    async Task ImproveDialog(Approval approval)
-        => Console.WriteLine(await ShowApprovalCommentDialog($"Improve {GetPanelText(approval)}?", false)); 
+    async Task ImproveAchievement(ApprovalPanel panel)
+    {
+        var continueAction = await ShowCommentDialog(panel.Approval, false);
 
-    async Task<bool> ShowApprovalCommentDialog(string title, bool isApproval)
+        if (continueAction)
+        {
+            await TerrainAchievementService.ImproveSubmission(panel.Approval.Submission, comment);
+            panel.Approval = await TerrainApprovalService.RefreshApproval(CurrentProfile.Unit!.Id, panel.Approval);
+        }
+    } 
+
+    async Task<bool> ShowCommentDialog(Approval approval, bool isApproval)
     {
         var parameters = new DialogParameters<ApprovalCommentDialog>
         {
             { d => d.IsApproval, isApproval },
             { d => d.Comment, comment }
         };
+
+        var title = isApproval
+            ? $"Approve {GetPanelText(approval)}?"
+            : $"Improve {GetPanelText(approval)}?";
 
         var dialog = await DialogService.ShowAsync<ApprovalCommentDialog>(title, parameters);
         var result = await dialog.Result;
@@ -86,12 +111,18 @@ public partial class ViewPendingApprovals : ComponentBase
 
     class ApprovalPanel
     {
-        public required Approval Approval { get; init; }
+        public required Approval Approval { get; set; }
 
         public Achievement Achievement = null!;
 
         public IEnumerable<ApprovalInput> Inputs = [];
 
         public bool DataIsLoaded => Achievement is not null;
+
+        public async Task LoadData(ITerrainAchievementService achievementService, ITerrainTemplateService templateService)
+        {
+            Achievement = await achievementService.GetAchievement(Approval);
+            Inputs = await templateService.GetInputs(Achievement);
+        }
     }
 }

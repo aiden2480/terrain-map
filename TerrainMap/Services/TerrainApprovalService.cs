@@ -11,6 +11,7 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
 {
     const string PendingApprovalsUrl = "https://achievements.terrain.scouts.com.au/units/{0}/submissions?status=pending";
     const string FinalisedApprovalsUrl = "https://achievements.terrain.scouts.com.au/units/{0}/submissions?status=finalised";
+    const string GetApprovalSubmissionUrl = "https://achievements.terrain.scouts.com.au/units/{0}/submissions/{1}";
 
     public async Task<IEnumerable<Approval>> GetPendingApprovals(string unitId)
         => await GetApprovals(PendingApprovalsUrl, unitId);
@@ -24,6 +25,14 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
         var response = await terrainClient.SendGet<GetApprovalsResponse>(url);
 
         return response.Results;
+    }
+
+    public async Task<Approval> RefreshApproval(string unitId, Approval approval)
+    {
+        var url = string.Format(GetApprovalSubmissionUrl, unitId, approval.Submission.Id);
+        var response = await terrainClient.SendGet<Approval>(url);
+
+        return response;
     }
 
     record GetApprovalsResponse(
