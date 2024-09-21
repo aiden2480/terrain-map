@@ -66,7 +66,7 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
             "sia_stem_innovation" => "STEM & Innovation",
 
             _ => "Unknown",
-        } + " SIA";
+        } + $" SIA ({approval.Submission.Type})";
 
     static string GetOASDescription(Approval approval)
     {
