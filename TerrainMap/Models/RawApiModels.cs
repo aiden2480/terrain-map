@@ -42,6 +42,7 @@ public record AchievementMeta(
     [property: JsonPropertyName("sia_area")] string SIAArea);
 
 public record Submission(
+    [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("type")] string Type,
     [property: JsonPropertyName("date")] DateTime Date,
     [property: JsonPropertyName("actioned_by")] IEnumerable<SubmissionActionedBy> ActionedBy);

@@ -26,6 +26,14 @@ public class TerrainApiClient(HttpClient httpClient, ILocalAuthService authServi
         return response;
     }
 
+    public async Task SendPostVoid<TContent>(string url, TContent content)
+    {
+        var request = await GetAuthenticatedRequest(url, HttpMethod.Post);
+
+        request.Content = new StringContent(JsonSerializer.Serialize(content));
+        await httpClient.SendAsync(request);
+    }
+
     async Task<HttpRequestMessage> GetAuthenticatedRequest(string url, HttpMethod method)
     {
         var request = new HttpRequestMessage(method, url);

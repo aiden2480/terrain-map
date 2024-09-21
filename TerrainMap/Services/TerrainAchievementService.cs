@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using TerrainMap.Models;
 using TerrainMap.Services.Interface;
 
@@ -7,6 +11,7 @@ namespace TerrainMap.Services;
 public class TerrainAchievementService(ITerrainApiClient terrainClient) : ITerrainAchievementService
 {
     const string GetAchievementUrl = "https://achievements.terrain.scouts.com.au/members/{0}/achievements/{1}";
+    const string ActionAchievementUrl = "https://achievements.terrain.scouts.com.au/submissions/{0}/assessments";
 
     async Task<Achievement> GetAchievement(string memberId, string achievementId)
     {
@@ -19,13 +24,21 @@ public class TerrainAchievementService(ITerrainApiClient terrainClient) : ITerra
     public async Task<Achievement> GetAchievement(Approval approval)
         => await GetAchievement(approval.Member.Id, approval.Achievement.Id);
 
-    public async Task ApproveAchievement(Achievement achievement, string comment)
-        => await ActionAchievement(achievement, "approved", comment);
+    public async Task ApproveSubmission(Submission submission, string comment)
+        => await ActionSubmission(submission, "approved", comment);
 
-    public async Task ImproveAchievement(Achievement achievement, string comment)
-        => await ActionAchievement(achievement, "rejected", comment);
+    public async Task ImproveSubmission(Submission submission, string comment)
+        => await ActionSubmission(submission, "rejected", comment);
 
-    async Task ActionAchievement(Achievement achievement, string outcome, string comment)
+    async Task ActionSubmission(Submission submission, string outcome, string comment)
     {
+        var assessment = new Assessment(outcome, comment);
+        var url = string.Format(ActionAchievementUrl, submission.Id);
+        
+        await terrainClient.SendPostVoid(url, assessment);
     }
+
+    record Assessment(
+        [property: JsonPropertyName("outcome")] string Outcome,
+        [property: JsonPropertyName("comment")] string Comment);
 }

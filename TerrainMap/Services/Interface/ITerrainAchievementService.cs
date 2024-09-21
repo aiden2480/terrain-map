@@ -7,7 +7,7 @@ public interface ITerrainAchievementService
 {
     Task<Achievement> GetAchievement(Approval approval);
 
-    Task ApproveAchievement(Achievement achievement, string comment);
+    Task ApproveSubmission(Submission submission, string comment);
 
-    Task ImproveAchievement(Achievement achievement, string comment);
+    Task ImproveSubmission(Submission submission, string comment);
 }

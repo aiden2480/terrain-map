@@ -22,4 +22,9 @@ public interface ITerrainApiClient
     /// <param name="content">The content which will be serialised into the content field of the request</param>
     /// <returns>The deserialised response</returns>
     Task<TResult> SendPost<TContent, TResult>(string url, TContent content);
+
+    /// <summary>
+    /// Sends a POST request without reading the response
+    /// </summary>
+    Task SendPostVoid<TContent>(string url, TContent content);
 }
