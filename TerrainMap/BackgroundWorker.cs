@@ -1,5 +1,6 @@
 ﻿using Blazor.BrowserExtension;
 using System.Threading.Tasks;
+using WebExtensions.Net.ActionNs;
 
 namespace TerrainMap;
 
@@ -8,15 +9,15 @@ public partial class BackgroundWorker : BackgroundWorkerBase
     [BackgroundWorkerMain]
     public override void Main()
     {
-        //WebExtensions.Runtime.OnInstalled.AddListener(OnInstalled);
+#if DEBUG
+        WebExtensions.Runtime.OnInstalled.AddListener(SetBetaBadge);
+        WebExtensions.Runtime.OnStartup.AddListener(SetBetaBadge);
+#endif
     }
 
-    async Task OnInstalled()
+    async Task SetBetaBadge()
     {
-        var indexPageUrl = await WebExtensions.Runtime.GetURL("index.html");
-        await WebExtensions.Tabs.Create(new()
-        {
-            Url = indexPageUrl
-        });
+        await WebExtensions.Action.SetBadgeText(new SetBadgeTextDetails { Text = "B" });
+        await WebExtensions.Action.SetBadgeBackgroundColor(new SetBadgeBackgroundColorDetails { Color = "#212d65" });
     }
 }
