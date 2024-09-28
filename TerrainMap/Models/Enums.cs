@@ -11,3 +11,7 @@ public enum Branch
     VIC,
     WA
 }
+
+public enum SvgIcon
+{
+}

@@ -38,8 +38,8 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
     record GetApprovalsResponse(
         [property: JsonPropertyName("results")] IEnumerable<Approval> Results);
 
-    public string GetApprovalDescription(Approval approval)
-        => approval.Achievement.Type switch
+    public (string, SvgIcon) GetApprovalDescriptionAndSvg(Approval approval)
+        => (approval.Achievement.Type switch
         {
             "intro_scouting" => "Introduction to Scouting",
             "intro_section" => "Introduction to Section",
@@ -53,7 +53,7 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
             "milestone" => $"Milestone {approval.Achievement.Meta.Stage}",
 
             _ => "Unknown achievement",
-        };
+        }, SvgIcon.Camping);
 
     static string GetSIADescription(Approval approval)
         => approval.Achievement.Meta.SIAArea switch

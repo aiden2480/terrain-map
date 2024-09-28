@@ -24,5 +24,5 @@ public interface ITerrainApprovalService
     /// <summary>
     /// Gets the friendly name for an approval
     /// </summary>
-    string GetApprovalDescription(Approval approval);
+    (string Description, SvgIcon Icon) GetApprovalDescriptionAndSvg(Approval approval);
 }

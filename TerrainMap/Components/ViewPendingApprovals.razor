@@ -13,12 +13,12 @@
                     @if (CanActionApproval(panel.Approval))
                     {
                         <MudBadge Dot="true" Overlap="true" Bordered="true" Color="Color.Secondary" Class="d-flex ml-auto">
-                            <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" />
+                            <MudIcon style="@GetPanelSvgIcon(panel.Approval)" />
                         </MudBadge>
                     }
                     else
                     {
-                        <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Default" Class="d-flex ml-auto" />
+                        <MudIcon style="@GetPanelSvgIcon(panel.Approval)" Class="d-flex ml-auto" />
                     }
                 </div>
             </TitleContent>

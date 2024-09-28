@@ -2,6 +2,7 @@
 using MudBlazor;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TerrainMap.Models;
@@ -46,7 +47,15 @@ public partial class ViewPendingApprovals : ComponentBase
     }
 
     string GetPanelText(Approval a)
-        => $"{a.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescription(a)}";
+        => $"{a.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescriptionAndSvg(a).Description}";
+
+    string GetPanelSvgIcon(Approval a)
+    {
+        var icon = TerrainApprovalService.GetApprovalDescriptionAndSvg(a).Icon;
+        var iconUrl = Path.Combine("icons", icon.ToString().ToLower() + ".svg");
+
+        return $"content: url({iconUrl})";
+    }
 
     static int GetApproveCount(Approval approval)
         => approval.Submission.ActionedBy.Count(a => a.Outcome == "approved");
