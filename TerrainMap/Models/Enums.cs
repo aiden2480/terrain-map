@@ -14,4 +14,27 @@ public enum Branch
 
 public enum SvgIcon
 {
+    Basketball,
+    Bicycle,
+    Books,
+    Camping,
+    Climbing,
+    Compass,
+    FleurDeLis,
+    Gemstone,
+    Globe,
+    GlowingStar,
+    HikingBoot,
+    MagnifyingGlass,
+    Paddling,
+    PerformingArts,
+    Recycle,
+    Rocket,
+    Sailboat,
+    Seedling,
+    ShintoShrine,
+    Snowman,
+    Trophy,
+    TropicalFish,
+    YinYang
 }
