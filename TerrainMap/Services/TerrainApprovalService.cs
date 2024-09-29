@@ -39,43 +39,66 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
         [property: JsonPropertyName("results")] IEnumerable<Approval> Results);
 
     public (string, SvgIcon) GetApprovalDescriptionAndSvg(Approval approval)
-        => (approval.Achievement.Type switch
+        => approval.Achievement.Type switch
         {
-            "intro_scouting" => "Introduction to Scouting",
-            "intro_section" => "Introduction to Section",
-            "course_reflection" => "Personal Development Course",
-            "adventurous_journey" => $"Adventurous Journey ({approval.Submission.Type})",
-            "personal_reflection" => "Personal Reflection",
-            "peak_award" => "Peak Award",
+            "intro_scouting" => ("Introduction to Scouting", SvgIcon.FleurDeLis),
+            "intro_section" => ("Introduction to Section", SvgIcon.ShintoShrine),
+            "course_reflection" => ("Personal Development Course", SvgIcon.Books),
+            "adventurous_journey" => ($"Adventurous Journey ({approval.Submission.Type})", SvgIcon.Rocket),
+            "personal_reflection" => ("Personal Reflection", SvgIcon.YinYang),
+            "peak_award" => ("Peak Award", SvgIcon.GlowingStar),
 
-            "special_interest_area" => GetSIADescription(approval),
-            "outdoor_adventure_skill" => GetOASDescription(approval),
-            "milestone" => $"Milestone {approval.Achievement.Meta.Stage}",
+            "special_interest_area" => GetSIA(approval),
+            "outdoor_adventure_skill" => GetOAS(approval),
+            "milestone" => ($"Milestone {approval.Achievement.Meta.Stage}", SvgIcon.Gemstone),
 
-            _ => "Unknown achievement",
-        }, SvgIcon.Camping);
+            _ => ("Unknown achievement", SvgIcon.Trophy),
+        };
 
-    static string GetSIADescription(Approval approval)
-        => approval.Achievement.Meta.SIAArea switch
+    static (string, SvgIcon) GetSIA(Approval approval)
+    {
+        (string description, SvgIcon icon) = approval.Achievement.Meta.SIAArea switch
         {
-            "sia_adventure_sport" => "Adventure & Sport",
-            "sia_art_literature" => "Arts & Literature",
-            "sia_better_world" => "Creating a Better World",
-            "sia_environment" => "Environment",
-            "sia_growth_development" => "Growth & Development",
-            "sia_stem_innovation" => "STEM & Innovation",
+            "sia_adventure_sport" => ("Adventure & Sport", SvgIcon.Basketball),
+            "sia_art_literature" => ("Arts & Literature", SvgIcon.PerformingArts),
+            "sia_better_world" => ("Creating a Better World", SvgIcon.Globe),
+            "sia_environment" => ("Environment", SvgIcon.Recycle),
+            "sia_growth_development" => ("Growth & Development", SvgIcon.Seedling),
+            "sia_stem_innovation" => ("STEM & Innovation", SvgIcon.MagnifyingGlass),
 
-            _ => "Unknown",
-        } + $" SIA ({approval.Submission.Type})";
+            _ => ("Unknown", SvgIcon.Trophy),
+        };
 
-    static string GetOASDescription(Approval approval)
+        return ($"{description} SIA ({approval.Submission.Type})", icon);
+    }
+
+    static (string, SvgIcon) GetOAS(Approval approval)
     {
         var textInfo = CultureInfo.CurrentCulture.TextInfo;
         var branch = approval.Achievement.Meta.Branch?.Replace("-", " ");
         var stage = approval.Achievement.Meta.Stage;
 
-        return !string.IsNullOrEmpty(branch)
-            ? textInfo.ToTitleCase($"{branch} stage {stage}")
-            : "Outdoor Adventure Skill";
+        if (approval.Achievement.Meta is null || string.IsNullOrEmpty(branch))
+        {
+            return ("Outdoor Adventure Skill", SvgIcon.Trophy);
+        }
+
+        var description = textInfo.ToTitleCase($"{branch} stage {stage}");
+        var icon = approval.Achievement.Meta.Stream switch
+        {
+            "alpine" => SvgIcon.Snowman,
+            "aquatics" => SvgIcon.TropicalFish,
+            "boating" => SvgIcon.Sailboat,
+            "bushcraft" => SvgIcon.Compass,
+            "bushwalking" => SvgIcon.HikingBoot,
+            "camping" => SvgIcon.Camping,
+            "cycling" => SvgIcon.Bicycle,
+            "paddling" => SvgIcon.Paddling,
+            "vertical" => SvgIcon.Climbing,
+
+            _ => SvgIcon.Trophy
+        };
+
+        return (description, icon);
     }
 }

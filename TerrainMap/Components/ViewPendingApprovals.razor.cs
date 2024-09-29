@@ -49,12 +49,12 @@ public partial class ViewPendingApprovals : ComponentBase
     string GetPanelText(Approval a)
         => $"{a.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescriptionAndSvg(a).Description}";
 
-    string GetPanelSvgIcon(Approval a)
+    string GetPanelIconStyle(Approval a)
     {
         var icon = TerrainApprovalService.GetApprovalDescriptionAndSvg(a).Icon;
         var iconUrl = Path.Combine("icons", icon.ToString().ToLower() + ".svg");
 
-        return $"content: url({iconUrl})";
+        return $"content: url({iconUrl}); font-size: 1.9rem";
     }
 
     static int GetApproveCount(Approval approval)

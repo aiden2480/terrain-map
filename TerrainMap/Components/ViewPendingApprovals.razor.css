@@ -13,3 +13,8 @@
     justify-content: flex-end;
     gap: 4px;
 }
+
+::deep .mud-badge {
+    min-width: 14px !important;
+    height: 14px !important;
+}
