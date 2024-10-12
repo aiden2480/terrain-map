@@ -1,0 +1,43 @@
+﻿<MudExpansionPanel Text="@PanelText" HideIcon>
+    <TitleContent>
+        <div class="d-flex">
+            <MudText Class="mt-1">@PanelText</MudText>
+
+            <MudBadge Color="Color.Secondary"
+                      Class="d-flex ml-auto"
+                      Visible="!submitted"
+                      Overlap Bordered>
+                <MudIcon Style="@GetPanelIconStyle()" />
+            </MudBadge>
+        </div>
+    </TitleContent>
+
+    <ChildContent>
+        <div class="center-text-div mb-2">
+            <p>This submission was approved on <b>@Approval.Submission.Date.ToString("ddd d MMM yyyy")</b>. Enter a date below to mark this approval as awarded.</p>
+        </div>
+
+        <div class="action-buttons-div">
+            <MudDatePicker PickerVariant="PickerVariant.Dialog"
+                           Label="Awarded Date"
+                           DateFormat="dddd, dd MMM yyyy"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           IsDateDisabledFunc="dt => dt > DateTime.Today"
+                           Disabled="submitted"
+                           @bind-Date="awardedDate" />
+
+            <MudIconButton Color="Color.Primary"
+                           Icon="@Icons.Material.Filled.Check"
+                           OnClick="Submit"
+                           Disabled="submitted" />
+        </div>
+
+        @if (submitted)
+        {
+            <div class="center-text-div mt-2">
+                <p>You have marked this approval as awarded.</p>
+            </div>
+        }
+    </ChildContent>
+</MudExpansionPanel>

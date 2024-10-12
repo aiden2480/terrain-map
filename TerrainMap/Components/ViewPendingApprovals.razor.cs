@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TerrainMap.Models;
 using TerrainMap.Services.Interface;
@@ -19,6 +20,9 @@ public partial class ViewPendingApprovals : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        pendingApprovals = await TerrainApprovalService.GetPendingApprovals(CurrentProfile.Unit!.Id);
+        // Show pending awards at the top, then order by date ascending (oldest submissions first)
+        pendingApprovals = (await TerrainApprovalService.GetPendingApprovals(CurrentProfile.Unit!.Id))
+            .OrderByDescending(a => a.Submission.Type == "award")
+            .ThenBy(a => a.Submission.Date);
     }
 }

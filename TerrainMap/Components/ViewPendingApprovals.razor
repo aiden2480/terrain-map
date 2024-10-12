@@ -7,9 +7,9 @@
     <MudExpansionPanels Outlined="false" Elevation="4">
         @if (pendingApprovals.Any())
         {
-            @foreach (var pendingApproval in pendingApprovals)
+            @foreach (var approval in pendingApprovals)
             {
-                <PendingApprovalPanel CurrentProfile="@CurrentProfile" Approval="@pendingApproval" />
+                @RenderApprovalPanel(approval)
             }
         }
         else
@@ -23,4 +23,14 @@ else
     <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="395px" Height="60px" Class="mb-1" />
     <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="395px" Height="60px" Class="mb-1" />
     <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="395px" Height="60px" Class="mb-1" />
+}
+
+@code {
+    RenderFragment RenderApprovalPanel(Approval approval)
+        => approval.Submission.Type switch
+        {
+            "award" => @<PendingAwardPanel Approval="@approval" />,
+            "review" or "approval" => @<PendingApprovalPanel CurrentProfile="@CurrentProfile" Approval="@approval" />,
+            _ => throw new ArgumentException($"Unknown submission type {approval.Submission.Type}")
+        };
 }
