@@ -26,6 +26,7 @@ public enum SvgIcon
     GlowingStar,
     HikingBoot,
     MagnifyingGlass,
+    MilitaryMedal,
     Paddling,
     PerformingArts,
     Recycle,
