@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TerrainMap.Models;
@@ -65,14 +64,6 @@ public partial class PendingApprovalPanel : ComponentBase
         => Approval.Submission.ActionedBy
             .Select(a => a.Id)
             .Contains(CurrentProfile.Member.Id);
-
-    string GetPanelIconStyle()
-    {
-        var icon = TerrainApprovalService.GetApprovalDescriptionAndSvg(Approval).Icon;
-        var iconUrl = Path.Combine("icons", icon.ToString().ToLower() + ".svg");
-
-        return $"content: url({iconUrl}); font-size: 1.9rem";
-    }
 
     async Task ExpandedChanged(bool isOpen)
     {

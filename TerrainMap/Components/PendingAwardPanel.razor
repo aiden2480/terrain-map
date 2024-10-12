@@ -1,15 +1,6 @@
 ﻿<MudExpansionPanel Text="@PanelText" HideIcon>
     <TitleContent>
-        <div class="d-flex">
-            <MudText Class="mt-1">@PanelText</MudText>
-
-            <MudBadge Color="Color.Secondary"
-                      Class="d-flex ml-auto"
-                      Visible="!submitted"
-                      Overlap Bordered>
-                <MudIcon Style="@GetPanelIconStyle()" />
-            </MudBadge>
-        </div>
+        <ApprovalPanelTitleContent PanelTitle="@PanelText" BadgeVisible="!submitted" Icon="SvgIcon.MilitaryMedal" />
     </TitleContent>
 
     <ChildContent>

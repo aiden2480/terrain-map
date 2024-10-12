@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 using TerrainMap.Models;
-using System.IO;
 using TerrainMap.Services.Interface;
 
 namespace TerrainMap.Components;
@@ -25,13 +24,6 @@ public partial class PendingAwardPanel : ComponentBase
 
     string PanelText
         => $"{Approval.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescriptionAndSvg(Approval).Description} Award";
-
-    string GetPanelIconStyle()
-    {
-        var iconUrl = Path.Combine("icons", SvgIcon.MilitaryMedal.ToString().ToLower() + ".svg");
-
-        return $"content: url({iconUrl}); font-size: 1.9rem";
-    }
 
     async Task Submit()
     {

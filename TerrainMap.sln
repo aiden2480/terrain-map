@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerrainMap", "TerrainMap\TerrainMap.csproj", "{4B83BA33-6A6A-434A-987A-92ED7D02D9BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainMap.Test", "TerrainMap.Test\TerrainMap.Test.csproj", "{E7D2D138-3818-4363-A112-919F70E4A367}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerrainMap.Test", "TerrainMap.Test\TerrainMap.Test.csproj", "{E7D2D138-3818-4363-A112-919F70E4A367}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

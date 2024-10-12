@@ -1,0 +1,33 @@
+﻿@using System.IO
+
+<div class="d-flex">
+    <MudText Class="mt-1">@PanelTitle</MudText>
+
+    <MudBadge Color="Color.Secondary"
+              Class="d-flex ml-auto"
+              Visible="@BadgeVisible"
+              Overlap Bordered>
+        <MudIcon Style="@GetPanelIconStyle()" />
+    </MudBadge>
+</div>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public required string PanelTitle { get; init; }
+
+    [Parameter]
+    [EditorRequired]
+    public required SvgIcon Icon { get; init; }
+
+    [Parameter]
+    [EditorRequired]
+    public required bool BadgeVisible { get; init; }
+
+    string GetPanelIconStyle()
+    {
+        var iconUrl = Path.Combine("icons", Icon.ToString().ToLower() + ".svg");
+
+        return $"content: url({iconUrl}); font-size: 1.9rem";
+    }
+}

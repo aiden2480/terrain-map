@@ -1,16 +1,6 @@
-﻿<MudExpansionPanel Text="@PanelText" ExpandedChanged="ExpandedChanged" HideIcon="true">
+﻿<MudExpansionPanel Text="@PanelText" ExpandedChanged="ExpandedChanged" HideIcon>
     <TitleContent>
-        <div class="d-flex">
-            <MudText Class="mt-1">@PanelText</MudText>
-
-            <MudBadge Visible="@CanActionApproval"
-                      Overlap="true"
-                      Bordered="true"
-                      Color="Color.Secondary"
-                      Class="d-flex ml-auto">
-                <MudIcon Style="@GetPanelIconStyle()" />
-            </MudBadge>
-        </div>
+        <ApprovalPanelTitleContent PanelTitle="@PanelText" BadgeVisible="CanActionApproval" Icon="TerrainApprovalService.GetApprovalDescriptionAndSvg(Approval).Icon" />
     </TitleContent>
 
     <ChildContent>
