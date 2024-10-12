@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TerrainMap",
   "description": "Quickly view & approve Scouts Terrain submissions",
-  "version": "0.2",
+  "version": "0.3",
   "background": {
     "service_worker": "content/BackgroundWorker.js",
     "type": "module"
