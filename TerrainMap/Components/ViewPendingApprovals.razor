@@ -2,26 +2,25 @@
 <p>Currently pending approvals & awards for @CurrentProfile.Unit!.Name. Submissions that have been approved but not awarded are displayed at the top, then pending approvals, oldest first.</p>
 <br />
 
-<MudExpansionPanels Outlined="false" Elevation="4">
-    @if (PendingApprovals.Any())
-    {
-        @foreach (var pendingApproval in PendingApprovals)
+@if (pendingApprovals is not null)
+{
+    <MudExpansionPanels Outlined="false" Elevation="4">
+        @if (pendingApprovals.Any())
         {
-            <PendingApprovalPanel CurrentProfile="@CurrentProfile" Approval="@pendingApproval" />
+            @foreach (var pendingApproval in pendingApprovals)
+            {
+                <PendingApprovalPanel CurrentProfile="@CurrentProfile" Approval="@pendingApproval" />
+            }
         }
-    }
-    else
-    {
-        <MudExpansionPanel Text="There are no pending submissions" Disabled HideIcon />
-    }
-</MudExpansionPanels>
-
-@code {
-    [Parameter]
-    [EditorRequired]
-    public required Profile CurrentProfile { get; init; }
-
-    [Parameter]
-    [EditorRequired]
-    public required IEnumerable<Approval> PendingApprovals { get; init; }
+        else
+        {
+            <MudExpansionPanel Text="There are no pending submissions" Disabled HideIcon />
+        }
+    </MudExpansionPanels>
+}
+else
+{
+    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="395px" Height="60px" Class="mb-1" />
+    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="395px" Height="60px" Class="mb-1" />
+    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Width="395px" Height="60px" Class="mb-1" />
 }
