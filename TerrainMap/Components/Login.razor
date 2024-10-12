@@ -20,6 +20,8 @@
                      RequiredError="Please enter your member number"
                      HideSpinButtons="true"
                      Variant="Variant.Outlined"
+                     @onkeydown="OnKeyPress"
+                     @ref="memberNumberField"
                      @bind-Value="memberNumber" />
 
     <MudTextField Label="Password"
@@ -27,6 +29,8 @@
                   RequiredError="Please enter your password"
                   InputType="InputType.Password"
                   Variant="Variant.Outlined"
+                  @onkeydown="OnKeyPress"
+                  @ref="passwordField"
                   @bind-Value="password" />
 
     <MudButton Variant="Variant.Filled"
@@ -48,3 +52,7 @@
 <br />
 
 <MudAlert Severity="Severity.Error" hidden="@(errorMessage == string.Empty)">@errorMessage</MudAlert>
+
+<p style="position: fixed; bottom: 15px; width: 100%; font-style: italic">
+    You must be a member of the unit council to use TerrainMap
+</p>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.Threading.Tasks;
 using TerrainMap.Models;
@@ -20,6 +21,10 @@ public partial class Login : ComponentBase
 
     private MudForm form = default!;
 
+    private MudNumericField<uint?> memberNumberField = default!;
+
+    private MudTextField<string> passwordField = default!;
+
     private Branch selectedBranch = Branch.NSW;
 
     private uint? memberNumber;
@@ -29,6 +34,17 @@ public partial class Login : ComponentBase
     private string errorMessage = string.Empty;
 
     private bool isLoading = false;
+
+    async Task OnKeyPress(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter"
+            && memberNumberField.Value.HasValue
+            && !string.IsNullOrWhiteSpace(password)
+            && !isLoading)
+        {
+            await SignIn();
+        }
+    }
 
     async Task SignIn()
     {
