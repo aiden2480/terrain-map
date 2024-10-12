@@ -30,6 +30,14 @@ public class TerrainAchievementService(ITerrainApiClient terrainClient) : ITerra
     public async Task ImproveSubmission(Submission submission, string comment)
         => await ActionSubmission(submission, "rejected", comment);
 
+    public async Task AwardSubmission(Submission submission, DateTime awardedAt)
+    {
+        var awardAssessment = new AwardAssessment("awarded", awardedAt.ToString("yyyy-MM-dd"));
+        var url = string.Format(ActionAchievementUrl, submission.Id);
+
+        await terrainClient.SendPostVoid(url, awardAssessment);
+    }
+
     async Task ActionSubmission(Submission submission, string outcome, string comment)
     {
         var assessment = new Assessment(outcome, comment);
@@ -41,4 +49,8 @@ public class TerrainAchievementService(ITerrainApiClient terrainClient) : ITerra
     record Assessment(
         [property: JsonPropertyName("outcome")] string Outcome,
         [property: JsonPropertyName("comment")] string Comment);
+
+    record AwardAssessment(
+        [property: JsonPropertyName("outcome")] string Outcome,
+        [property: JsonPropertyName("date_awarded")] string DateAwarded);
 }
