@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ public class LocalAuthService(ITerrainAuthService terrainAuthService, IWebExtens
     // need to store the username & password
 
     public async Task<bool> IsAuthenticated()
-        => (await GetStorageTokens()).RefreshToken is not null;
+        => (await GetStorageTokens(skipReauthentication: true)).RefreshToken is not null;
 
     public async Task<string> GetAccessToken()
         => (await GetStorageTokens()).AccessToken!;
@@ -39,7 +39,7 @@ public class LocalAuthService(ITerrainAuthService terrainAuthService, IWebExtens
         await webExtensions.Storage.Sync.Set(storageTokens);
     }
 
-    async Task<StorageTokens> GetStorageTokens()
+    async Task<StorageTokens> GetStorageTokens(bool skipReauthentication = false)
     {
         // Deserialise whatever is in the chrome storage
         var storageResult = await webExtensions.Storage.Sync.Get();
@@ -47,7 +47,7 @@ public class LocalAuthService(ITerrainAuthService terrainAuthService, IWebExtens
         ArgumentNullException.ThrowIfNull(storageTokens, nameof(storageTokens));
 
         // Check if the access token has expired, update if so
-        if (NeedToReauthenticateWithRefreshToken(storageTokens))
+        if (NeedToReauthenticateWithRefreshToken(storageTokens) && !skipReauthentication)
         {
             // If we don't have a refresh token, return empty storage tokens
             if (storageTokens.RefreshToken is null)
