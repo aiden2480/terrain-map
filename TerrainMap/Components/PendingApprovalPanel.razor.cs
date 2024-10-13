@@ -72,7 +72,7 @@ public partial class PendingApprovalPanel : ComponentBase
         if (isOpen && !DataIsLoaded)
         {
             Achievement = await TerrainAchievementService.GetAchievement(Approval);
-            Inputs = await TerrainTemplateService.GetInputs(Achievement);
+            Inputs = await TerrainTemplateService.GetInputs(Approval, Achievement);
         }
     }
 
