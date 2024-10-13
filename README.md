@@ -14,3 +14,11 @@ Pending approvals can be easily retrieved and actioned, providing an easy interf
 
 > [!TIP]
 > [Download TerrainMap on the Chrome Webstore](https://chromewebstore.google.com/detail/terrainmap/gmchfepajkbnjgfmomdghcgobhideike) for automatic updates
+
+## :gear: Development Installation
+1. `git clone https://github.com/aiden2480/terrain-map`
+2. `cd terrain-map && dotnet build TerrainMap`
+3. Navigate to `chrome://extensions`
+4. Enable `Developer mode`
+5. Click `Load unpacked`
+6. Select the folder `terrain-map\TerrainMap\bin\Debug\net8.0\browserextension`
