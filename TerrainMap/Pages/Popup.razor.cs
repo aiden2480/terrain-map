@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blazor.BrowserExtension.Pages;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using TerrainMap.Services.Interface;
 
 namespace TerrainMap.Pages;
 
-public partial class Popup : ComponentBase
+public partial class Popup : BasePage
 {
     [Inject]
     public required IStorageService StorageService { get; set; }
