@@ -72,15 +72,17 @@
             return @<MudText><i>No response provided</i></MudText>;
         }
 
-        var answerString = answer?.GetString() ?? string.Empty;
+        var answerString = () => answer?.GetString()!;
+        var answerStringArray = () => answer?.EnumerateArray().Select(e => e.GetString()).ToList();
+
         return input.Type switch
         {
-            "text_input" => TextInput(answerString),
+            "text_input" => TextInput(answerString()),
             "checkbox" => VerifiableCheckbox(),
             "verifiable_checkbox" => VerifiableCheckbox(),
-            "radio" => Radio(input.Selections!, answerString),
-            "single_tab_selector" => SingleTabSelector(input.Selections!, answerString),
-            "multi_tab_selector" => MultiTabSelector(input.Tabs!.SelectMany(t => t.Selections), answer?.EnumerateArray().Select(e => e.GetString()).ToList()!),
+            "radio" => Radio(input.Selections!, answerString()),
+            "single_tab_selector" => SingleTabSelector(input.Selections!, answerString()),
+            "multi_tab_selector" => MultiTabSelector(input.Tabs!.SelectMany(t => t.Selections), answerStringArray()),
 
             _ => UnknownInputType(input.Type)
         };
