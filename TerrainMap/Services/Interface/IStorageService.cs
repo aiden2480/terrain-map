@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TerrainMap.Models;
 
 namespace TerrainMap.Services.Interface;
 
-public interface ILocalAuthService
+public interface IStorageService
 {
     /// <summary>
     /// Has a refresh token been set which can be used to find any other tokens
@@ -22,4 +23,8 @@ public interface ILocalAuthService
     /// </summary>
     /// <param name="loginApiResponse">The API response. Must contain refresh token</param>
     Task UpdateFromLoginApiResponse(LoginApiResponse loginApiResponse);
+
+    Task<IEnumerable<Profile>?> GetProfilesFromStorage();
+
+    Task SetProfiles(IEnumerable<Profile> profiles);
 }

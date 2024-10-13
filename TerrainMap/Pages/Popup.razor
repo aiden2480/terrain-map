@@ -1,6 +1,6 @@
 ﻿@page "/popup.html"
 @inherits BasePage
-@inject ILocalAuthService AuthService
+@inject IStorageService StorageService
 @inject ITerrainApprovalService TerrainApprovalService
 @inject ITerrainProfileService TerrainProfileService
 
@@ -14,12 +14,19 @@
 
     async Task<RenderFragment> GetPopupFragment()
     {
-        if (!await AuthService.IsAuthenticated())
+        if (!await StorageService.IsAuthenticated())
         {
             return @<Login OnLoginSuccess="OnInitializedAsync" />;
         }
 
-        var profiles = await TerrainProfileService.GetProfiles();
+        var profiles = await StorageService.GetProfilesFromStorage();
+
+        if (profiles is null)
+        {
+            profiles = await TerrainProfileService.GetProfiles();
+            await StorageService.SetProfiles(profiles);
+        }
+
         var profile = profiles.First(p => p.Unit is not null);
 
         return @<ViewPendingApprovals CurrentProfile="@profile" />;

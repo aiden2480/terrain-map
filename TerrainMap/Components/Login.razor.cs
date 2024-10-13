@@ -13,7 +13,7 @@ public partial class Login : ComponentBase
     public required ITerrainAuthService TerrainAuthService { get; set; }
 
     [Inject]
-    public required ILocalAuthService AuthService { get; set; }
+    public required IStorageService StorageService { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -63,7 +63,7 @@ public partial class Login : ComponentBase
         // If successful, invoke callback. Otherwise display error
         if (loginApiResponse.Success)
         {
-            await AuthService.UpdateFromLoginApiResponse(loginApiResponse);
+            await StorageService.UpdateFromLoginApiResponse(loginApiResponse);
             await OnLoginSuccess.InvokeAsync();
         }
         else

@@ -7,7 +7,7 @@ using TerrainMap.Services.Interface;
 
 namespace TerrainMap.Services;
 
-public class TerrainApiClient(HttpClient httpClient, ILocalAuthService authService) : ITerrainApiClient
+public class TerrainApiClient(HttpClient httpClient, IStorageService storageService) : ITerrainApiClient
 {
     public async Task<TResult> SendGet<TResult>(string url)
     {
@@ -37,7 +37,7 @@ public class TerrainApiClient(HttpClient httpClient, ILocalAuthService authServi
     async Task<HttpRequestMessage> GetAuthenticatedRequest(string url, HttpMethod method)
     {
         var request = new HttpRequestMessage(method, url);
-        var idToken = await authService.GetIdToken();
+        var idToken = await storageService.GetIdToken();
 
         request.Headers.Authorization = new AuthenticationHeaderValue(idToken);
         return request;
