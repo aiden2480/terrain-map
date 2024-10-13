@@ -36,6 +36,8 @@ public partial class PendingApprovalPanel : ComponentBase
 
     string comment = string.Empty;
 
+    bool actionedByCurrentUser = false;
+
     bool DataIsLoaded
         => Achievement is not null && Inputs is not null;
 
@@ -61,9 +63,9 @@ public partial class PendingApprovalPanel : ComponentBase
         => Approval.Member.Id == CurrentProfile.Member.Id;
 
     bool AlreadyActionedByCurrentUser
-        => Approval.Submission.ActionedBy
-            .Select(a => a.Id)
-            .Contains(CurrentProfile.Member.Id);
+        => actionedByCurrentUser || Approval.Submission.ActionedBy
+             .Select(a => a.Id)
+             .Contains(CurrentProfile.Member.Id);
 
     async Task ExpandedChanged(bool isOpen)
     {
@@ -80,8 +82,8 @@ public partial class PendingApprovalPanel : ComponentBase
 
         if (continueAction)
         {
-            await TerrainAchievementService.ApproveSubmission(Approval.Submission, comment);
-            Approval = await TerrainApprovalService.RefreshApproval(CurrentProfile.Unit!.Id, Approval);
+             await TerrainAchievementService.ApproveSubmission(Approval.Submission, comment);
+            actionedByCurrentUser = true;
         }
     }
 
@@ -91,8 +93,8 @@ public partial class PendingApprovalPanel : ComponentBase
 
         if (continueAction)
         {
-            await TerrainAchievementService.ImproveSubmission(Approval.Submission, comment);
-            Approval = await TerrainApprovalService.RefreshApproval(CurrentProfile.Unit!.Id, Approval);
+             await TerrainAchievementService.ImproveSubmission(Approval.Submission, comment);
+            actionedByCurrentUser = true;
         }
     }
 

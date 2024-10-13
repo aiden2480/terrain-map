@@ -17,11 +17,6 @@ public interface ITerrainApprovalService
     Task<IEnumerable<Approval>> GetFinalisedApprovals(string unitId);
 
     /// <summary>
-    /// Fetches the corresponding updated approval from the Terrain API
-    ///</summary>
-    Task<Approval> RefreshApproval(string unitId, Approval approval);
-
-    /// <summary>
     /// Gets the friendly name for an approval
     /// </summary>
     (string Description, SvgIcon Icon) GetApprovalDescriptionAndSvg(Approval approval);

@@ -27,14 +27,6 @@ public class TerrainApprovalService(ITerrainApiClient terrainClient) : ITerrainA
         return response.Results;
     }
 
-    public async Task<Approval> RefreshApproval(string unitId, Approval approval)
-    {
-        var url = string.Format(GetApprovalSubmissionUrl, unitId, approval.Submission.Id);
-        var response = await terrainClient.SendGet<Approval>(url);
-
-        return response;
-    }
-
     record GetApprovalsResponse(
         [property: JsonPropertyName("results")] IEnumerable<Approval> Results);
 
