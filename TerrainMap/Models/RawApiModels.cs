@@ -72,7 +72,11 @@ public record ApprovalInput(
     [property: JsonPropertyName("type")] string Type,
     [property: JsonPropertyName("label")] string Label,
     [property: JsonPropertyName("dialog_text")] string? DialogText,
-    [property: JsonPropertyName("selections")] IEnumerable<ApprovalInputSelection>? Selections);
+    [property: JsonPropertyName("selections")] IEnumerable<ApprovalInputSelection>? Selections,
+    [property: JsonPropertyName("tabs")] IEnumerable<ApprovalInputTab>? Tabs);
+
+public record ApprovalInputTab(
+    [property: JsonPropertyName("selections")] IEnumerable<ApprovalInputSelection> Selections);
 
 public record ApprovalInputSelection(
     [property: JsonPropertyName("id")] string Id,

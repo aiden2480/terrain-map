@@ -65,20 +65,22 @@
 @code {
     RenderFragment GetRenderFragment(ApprovalInput input)
     {
-        var answer = Achievement.Answers.GetValueOrDefault(input.Id);
+        var answer = (System.Text.Json.JsonElement?)Achievement.Answers.GetValueOrDefault(input.Id);
 
         if (answer is null)
         {
             return @<MudText><i>No response provided</i></MudText>;
         }
 
+        var answerString = answer?.GetString() ?? string.Empty;
         return input.Type switch
         {
-            "text_input" => TextInput(answer.ToString()!),
+            "text_input" => TextInput(answerString),
             "checkbox" => VerifiableCheckbox(),
             "verifiable_checkbox" => VerifiableCheckbox(),
-            "radio" => Radio(input.Selections!, answer.ToString()!),
-            "single_tab_selector" => SingleTabSelector(input.Selections!, answer.ToString()!),
+            "radio" => Radio(input.Selections!, answerString),
+            "single_tab_selector" => SingleTabSelector(input.Selections!, answerString),
+            "multi_tab_selector" => MultiTabSelector(input.Tabs!.SelectMany(t => t.Selections), answer?.EnumerateArray().Select(e => e.GetString()).ToList()!),
 
             _ => UnknownInputType(input.Type)
         };
@@ -103,4 +105,12 @@
 
     RenderFragment SingleTabSelector(IEnumerable<ApprovalInputSelection> selections, string answer)
         => TextInput(selections.Single(s => s.Id == answer).Title);
+
+    RenderFragment MultiTabSelector(IEnumerable<ApprovalInputSelection> selections, IEnumerable<string> answers)
+        => @<div>
+            @foreach (var answer in answers)
+            {
+                <MudCheckBox Disabled Value="true" Label="@selections.Single(a => a.Id == answer).Title" Size="Size.Small" />
+            }
+        </div>;
 }
