@@ -1,8 +1,5 @@
 ﻿@page "/popup.html"
 @inherits BasePage
-@inject IStorageService StorageService
-@inject ITerrainApprovalService TerrainApprovalService
-@inject ITerrainProfileService TerrainProfileService
 
 @popupFragment
 
@@ -19,16 +16,17 @@
             return @<Login OnLoginSuccess="OnInitializedAsync" />;
         }
 
-        var profiles = await StorageService.GetProfilesFromStorage();
+        // Attempt to get an applicable profile.
+        // If none exist, refresh cache, and try again
+        var profile = await GetFirstProfileInUnitCouncil() ?? await GetFirstProfileInUnitCouncil(true);
 
-        if (profiles is null)
+        if (profile is not null)
         {
-            profiles = await TerrainProfileService.GetProfiles();
-            await StorageService.SetProfiles(profiles);
+            return @<ViewPendingApprovals CurrentProfile="@profile" />;
         }
-
-        var profile = profiles.First(p => p.Unit is not null);
-
-        return @<ViewPendingApprovals CurrentProfile="@profile" />;
+        else
+        {
+            return @<MudAlert Severity="Severity.Error">You are not a member of the unit council for any units. Ask your unit leader to add you, then try again</MudAlert>;
+        }
     }
 }
