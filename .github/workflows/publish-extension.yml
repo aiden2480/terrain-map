@@ -20,7 +20,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
     - name: Install WASM tools
       run: dotnet workload install wasm-tools
     - name: Restore dependencies
@@ -35,10 +35,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: TerrainMap
-        path: ./TerrainMap/bin/Release/net8.0/publish/browserextension
+        path: ./TerrainMap/bin/Release/publish/browserextension
         if-no-files-found: error
     - name: Zip published files
-      run: (cd ./TerrainMap/bin/Release/net8.0/publish/browserextension && zip -r - .) > TerrainMap.zip
+      run: (cd ./TerrainMap/bin/Release/publish/browserextension && zip -r - .) > TerrainMap.zip
     - name: Publish to Chrome Webstore
       uses: MobileFirstLLC/cws-publish@2.1.1
       with:
