@@ -7,14 +7,15 @@ namespace TerrainMap.Services.Interface;
 public interface IStorageService
 {
     /// <summary>
-    /// Has a refresh token been set which can be used to find any other tokens
+    /// Checks that the user is authenticated by validating and reauthenticating the refresh token.
+    /// If reauthentication fails, clears storage data since we know it's invalid.
     /// </summary>
     Task<bool> IsAuthenticated();
 
-    /// <returns>The current user's access token</returns>
+    /// <returns>The current user's access token. Ensure the user <see cref="IsAuthenticated"/> before invoking</returns>
     Task<string> GetAccessToken();
 
-    /// <returns>The current user's id token</returns>
+    /// <returns>The current user's id token. Ensure the user <see cref="IsAuthenticated"/> before invoking</returns>
     Task<string> GetIdToken();
 
     /// <summary>

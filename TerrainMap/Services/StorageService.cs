@@ -11,21 +11,36 @@ namespace TerrainMap.Services;
 
 public class StorageService(ITerrainAuthService terrainAuthService, IWebExtensionsApi webExtensions) : IStorageService
 {
-    // The refresh token never expires - I assume unless the user
-    // changes their password, but we don't care about that.
-    // For the user to be considered authenticated, we must have
-    // access to the refresh token. We can then cache the access
-    // token or retrieve a new one if need be. This way we never
-    // need to store the username & password
-
     public async Task<bool> IsAuthenticated()
-        => (await GetStorageTokens(skipReauthentication: true)).RefreshToken is not null;
+    {
+        var modelFromStorage = await GetModelFromStorage();
+
+        // If there's nothing in the storage already, we are definitely not authenticated
+        if (modelFromStorage.RefreshToken is null)
+        {
+            return false;
+        }
+
+        // The only way to verify the refresh token is still valid is to send a request with it
+        // so we may as well save the results of the request since we're here anyway
+        var modelFromReauthentication = await TryGenerateNewModelFromRefreshToken(modelFromStorage.RefreshToken);
+
+        // Reauthentication failed so delete whatever is in storage
+        if (modelFromReauthentication is null)
+        {
+            await ClearModel();
+            return false;
+        }
+        
+        await UpdateModel(modelFromReauthentication);
+        return true;
+    }
 
     public async Task<string> GetAccessToken()
-        => (await GetStorageTokens()).AccessToken!;
+        => (await GetModelFromStorageWithReauthenticationIfRequired()).AccessToken!;
 
     public async Task<string> GetIdToken()
-        => (await GetStorageTokens()).IdToken!;
+        => (await GetModelFromStorageWithReauthenticationIfRequired()).IdToken!;
 
     public async Task UpdateFromLoginApiResponse(LoginApiResponse loginApiResponse)
     {
@@ -44,7 +59,7 @@ public class StorageService(ITerrainAuthService terrainAuthService, IWebExtensio
 
     public async Task<IEnumerable<Profile>?> GetProfilesFromStorage()
     {
-        var model = await GetModel();
+        var model = await GetModelFromStorage();
 
         return (model.Profiles is not null && model.ProfilesExpire is not null && model.ProfilesExpire > DateTime.Now)
             ? model.Profiles
@@ -62,26 +77,32 @@ public class StorageService(ITerrainAuthService terrainAuthService, IWebExtensio
         await UpdateModel(model);
     }
 
-    async Task<StorageModel> GetStorageTokens(bool skipReauthentication = false)
+    async Task<StorageModel> GetModelFromStorageWithReauthenticationIfRequired()
     {
-        var model = await GetModel();
+        var modelFromStorage = await GetModelFromStorage();
 
-        // Check if the access token has expired, update if so
-        if (NeedToReauthenticateWithRefreshToken(model) && !skipReauthentication)
+        if (!NeedToReauthenticateWithRefreshToken(modelFromStorage))
         {
-            // If we don't have a refresh token, return empty storage tokens
-            if (model.RefreshToken is null)
-            {
-                await ClearModel();
-                throw new ArgumentNullException("Trying to generate new tokens but we don't have the refresh token");
-            }
-
-            // Update tokens & write back to storage
-            model = await GenerateNewTokens(model.RefreshToken);
-            await UpdateModel(model);
+            return modelFromStorage;
         }
 
-        return model;
+        // If we don't have a refresh token, there's not much we can do other than logout and reload
+        if (modelFromStorage.RefreshToken is null)
+        {
+            await ClearModel();
+            throw new ArgumentNullException("Trying to generate new tokens but we don't have the refresh token");
+        }
+
+        var modelFromReauthentication = await TryGenerateNewModelFromRefreshToken(modelFromStorage.RefreshToken);
+
+        // If we failed with the reauthentication, just logout and relaod
+        if (modelFromReauthentication is null)
+        {
+            await ClearModel();
+            throw new ArgumentNullException("Reauthentication failed with refresh token");
+        }
+
+        return modelFromReauthentication;
     }
 
     static bool NeedToReauthenticateWithRefreshToken(StorageModel model)
@@ -90,9 +111,15 @@ public class StorageService(ITerrainAuthService terrainAuthService, IWebExtensio
         || model.AccessTokenExpires is null
         || model.AccessTokenExpires <= DateTime.Now;
 
-    async Task<StorageModel> GenerateNewTokens(string refreshToken)
+    async Task<StorageModel?> TryGenerateNewModelFromRefreshToken(string refreshToken)
     {
         var loginApiResponse = await terrainAuthService.AttemptLoginWithRefreshToken(refreshToken);
+
+        if (!loginApiResponse.Success)
+        {
+            Console.WriteLine(loginApiResponse.ErrorMessage);
+            return null;
+        }
 
         // The response for the refresh token auth doesn't
         // contain an auth token so we must sub it out with
@@ -106,7 +133,7 @@ public class StorageService(ITerrainAuthService terrainAuthService, IWebExtensio
         };
     }
 
-    async Task<StorageModel> GetModel()
+    async Task<StorageModel> GetModelFromStorage()
     {
         var storageResult = await webExtensions.Storage.Sync.Get();
         var model = storageResult.Deserialize<StorageModel>();
