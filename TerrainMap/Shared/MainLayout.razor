@@ -3,6 +3,20 @@
 @Body
 
 @* MudBlazor *@
-<MudThemeProvider />
+<MudThemeProvider @ref="themeProvider" @bind-IsDarkMode="darkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
+
+@code {
+    private bool darkMode;
+    private MudThemeProvider themeProvider = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            darkMode = await themeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
+    }
+}
