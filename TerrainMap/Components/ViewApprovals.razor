@@ -1,13 +1,9 @@
-﻿<h1>Pending Approvals & Awards</h1>
-<p>Currently pending approvals & awards for @CurrentProfile.Unit!.Name. Submissions that have been approved but not awarded are displayed at the top, then pending approvals, oldest first.</p>
-<br />
-
-@if (pendingApprovals is not null)
+﻿@if (approvals is not null)
 {
     <MudExpansionPanels Outlined="false" Elevation="4">
-        @if (pendingApprovals.Any())
+        @if (approvals.Any())
         {
-            @foreach (var approval in pendingApprovals)
+            @foreach (var approval in approvals)
             {
                 @RenderApprovalPanel(approval)
             }

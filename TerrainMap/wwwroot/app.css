@@ -1,7 +1,6 @@
-﻿body {
-    padding: 15px;
-    min-width: 425px;
-    min-height: 525px;
+﻿body, html {
+    width: 425px;
+    height: 525px;
     word-break: break-word;
 }
 

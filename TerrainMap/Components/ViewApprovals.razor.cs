@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +9,7 @@ using TerrainMap.Services.Interface;
 
 namespace TerrainMap.Components;
 
-public partial class ViewPendingApprovals : ComponentBase
+public partial class ViewApprovals : ComponentBase
 {
     [Inject]
     public required ITerrainApprovalService TerrainApprovalService { get; set; }
@@ -16,13 +18,16 @@ public partial class ViewPendingApprovals : ComponentBase
     [EditorRequired]
     public required Profile CurrentProfile { get; init; }
 
-    private IEnumerable<Approval>? pendingApprovals;
+    [Parameter]
+    [EditorRequired]
+    public required Func<Approval, bool> ApprovalsPredicate { get; init; }
+
+    private IEnumerable<Approval>? approvals;
 
     protected override async Task OnInitializedAsync()
     {
-        // Show pending awards at the top, then order by date ascending (oldest submissions first)
-        pendingApprovals = (await TerrainApprovalService.GetPendingApprovals(CurrentProfile.Unit!.Id))
-            .OrderByDescending(a => a.Submission.Type == "award")
-            .ThenBy(a => a.Submission.Date);
+        approvals = (await TerrainApprovalService.GetPendingApprovals(CurrentProfile.Unit!.Id))
+            .Where(ApprovalsPredicate)
+            .OrderBy(a => a.Submission.Date);
     }
 }
