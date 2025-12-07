@@ -26,7 +26,7 @@ public class TerrainTemplateService(ITerrainApiClient terrainClient) : ITerrainT
     public async Task<IEnumerable<ApprovalInput>> GetInputs(Approval approval, Achievement achievement)
     {
         // For some reason, SIA reviews do not have an updated template field, so we must overwrite it manually
-        var template = (approval.Submission.Type == "review" && approval.Achievement.Type == "special_interest_area")
+        var template = (approval.Submission.Type == SubmissionType.Review && approval.Achievement.Type == "special_interest_area")
             ? achievement.Template.Replace("plan", "review")
             : achievement.Template;
 

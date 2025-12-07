@@ -44,7 +44,7 @@ public partial class Popup : BasePage
         var pending = await TerrainApprovalService.GetPendingApprovals(unit.Id);
 
         return pending
-            .Where(a => a.Submission.Type == "approval" || a.Submission.Type == "review")
+            .Where(a => a.Submission.Type == SubmissionType.Approval || a.Submission.Type == SubmissionType.Review)
             .OrderBy(a => a.Submission.Date);
     }
 
@@ -53,7 +53,7 @@ public partial class Popup : BasePage
         var pending = await TerrainApprovalService.GetPendingApprovals(unit.Id);
 
         return pending
-            .Where(a => a.Submission.Type == "award")
+            .Where(a => a.Submission.Type == SubmissionType.Award)
             .OrderBy(a => a.Submission.Date);
     }
 
@@ -62,7 +62,7 @@ public partial class Popup : BasePage
         var finalised = await TerrainApprovalService.GetFinalisedApprovals(unit.Id);
 
         return finalised
-            .Where(a => a.Submission.Type == "approval" || a.Submission.Type == "review")
+            .Where(a => a.Submission.Type == SubmissionType.Approval || a.Submission.Type == SubmissionType.Review)
             .Where(a => a.Submission.Date >= DateTime.UtcNow.AddDays(-90))
             .OrderByDescending(a => a.Submission.Date);
     }

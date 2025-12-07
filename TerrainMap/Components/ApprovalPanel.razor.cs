@@ -48,13 +48,13 @@ public partial class ApprovalPanel : ComponentBase
         => $"{Approval.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescriptionAndSvg(Approval).Description}";
 
     int ApproveCount
-        => Approval.Submission.ActionedBy.Count(a => a.Outcome == "approved");
+        => Approval.Submission.ActionedBy.Count(a => a.Outcome == SubmissionOutcome.Approved);
 
     string PluralApproveText
         => ApproveCount == 1 ? "approve" : "approves";
 
     int ImproveCount
-        => Approval.Submission.ActionedBy.Count(a => a.Outcome == "rejected");
+        => Approval.Submission.ActionedBy.Count(a => a.Outcome == SubmissionOutcome.Rejected);
 
     string PluralImproveText
         => ImproveCount == 1 ? "improve" : "improves";

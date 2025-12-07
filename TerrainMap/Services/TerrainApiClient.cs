@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TerrainMap.Services.Interface;
 
@@ -9,6 +10,12 @@ namespace TerrainMap.Services;
 
 public class TerrainApiClient(HttpClient httpClient, IStorageService storageService) : ITerrainApiClient
 {
+    static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+    };
+    
     public async Task<TResult> SendGet<TResult>(string url)
     {
         var request = await GetAuthenticatedRequest(url, HttpMethod.Get);
@@ -56,7 +63,7 @@ public class TerrainApiClient(HttpClient httpClient, IStorageService storageServ
     {
         try
         {
-            var responseParsed = JsonSerializer.Deserialize<TResult>(responseText);
+            var responseParsed = JsonSerializer.Deserialize<TResult>(responseText, JsonOptions);
             ArgumentNullException.ThrowIfNull(responseParsed, nameof(responseParsed));
 
             return responseParsed;

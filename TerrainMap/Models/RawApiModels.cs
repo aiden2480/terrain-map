@@ -43,15 +43,16 @@ public record AchievementMeta(
 
 public record Submission(
     [property: JsonPropertyName("id")] string Id,
-    [property: JsonPropertyName("type")] string Type,
+    [property: JsonPropertyName("type")] SubmissionType Type,
     [property: JsonPropertyName("date")] DateTime Date,
+    [property: JsonPropertyName("outcome")] SubmissionOutcome? Outcome, // Only populated for finalised submissions
     [property: JsonPropertyName("actioned_by")] IEnumerable<SubmissionActionedBy> ActionedBy);
 
 public record SubmissionActionedBy(
     [property: JsonPropertyName("member_id")] string Id,
     [property: JsonPropertyName("member_first_name")] string FirstName,
     [property: JsonPropertyName("member_last_name")] string LastName,
-    [property: JsonPropertyName("outcome")] string Outcome,
+    [property: JsonPropertyName("outcome")] SubmissionOutcome Outcome,
     [property: JsonPropertyName("time")] DateTime Time,
     [property: JsonPropertyName("comment")] string? Comment);
 
@@ -81,3 +82,17 @@ public record ApprovalInputTab(
 public record ApprovalInputSelection(
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("title")] string Title);
+
+public enum SubmissionOutcome
+{
+    [JsonStringEnumMemberName("approved")] Approved,
+    [JsonStringEnumMemberName("rejected")] Rejected,
+    [JsonStringEnumMemberName("awarded")] Awarded
+}
+
+public enum SubmissionType
+{
+    [JsonStringEnumMemberName("award")] Award,
+    [JsonStringEnumMemberName("review")] Review,
+    [JsonStringEnumMemberName("approval")] Approval
+}

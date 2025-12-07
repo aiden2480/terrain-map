@@ -25,8 +25,8 @@ else
     RenderFragment RenderApprovalPanel(Approval approval)
         => approval.Submission.Type switch
         {
-            "award" => @<PendingAwardPanel Approval="@approval" />,
-            "review" or "approval" => @<ApprovalPanel CurrentProfile="@CurrentProfile" Approval="@approval" IsReadOnly="@IsReadOnly" />,
+            SubmissionType.Award => @<PendingAwardPanel Approval="@approval" />,
+            SubmissionType.Review or SubmissionType.Approval => @<ApprovalPanel CurrentProfile="@CurrentProfile" Approval="@approval" IsReadOnly="@IsReadOnly" />,
             _ => throw new ArgumentException($"Unknown submission type {approval.Submission.Type}")
         };
 }
