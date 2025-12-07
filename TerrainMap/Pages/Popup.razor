@@ -9,10 +9,6 @@
     protected override async Task OnInitializedAsync()
         => popupFragment = await GetPopupFragment();
 
-    bool IsPendingApproval(Approval a) => a.Submission.Type == "approval" || a.Submission.Type == "review";
-
-    bool IsAward(Approval a) => a.Submission.Type == "award";
-
     async Task<RenderFragment> GetPopupFragment()
     {
         if (!await StorageService.IsAuthenticated())
@@ -28,26 +24,29 @@
             return @<MudAlert Severity="Severity.Error">You are not a member of the unit council for any units. Ask your unit leader to add you, then try again</MudAlert>;
         }
 
-        return @<MudTabs PanelClass="pa-3" Centered="true" MinimumTabWidth="calc(round(down, calc(425px / 2), 1px) - 1px)" KeepPanelsAlive="true">
+        return @<MudTabs PanelClass="pa-3" Centered="true" MinimumTabWidth="calc(round(down, calc(425px / 3), 1px) - 1px)">
             <MudTabPanel Text="Approvals">
                 <h1>Pending Approvals</h1>
                 <p>Review the pending submissions for @profile.Unit!.Name and mark each one Approve or Improve. Any submission shown with a dot can be actioned by you.</p>
                 <br />
 
-                <ViewApprovals CurrentProfile="@profile" ApprovalsPredicate="@IsPendingApproval" />
+                <ViewApprovals CurrentProfile="@profile" ApprovalsAccessor="@GetPendingApprovals" />
             </MudTabPanel>
             <MudTabPanel Text="Awards">
                 <h1>Pending Awards</h1>
                 <p>Currently pending awards for @profile.Unit!.Name. These submissions have been approved by the unit council, but the youth member has not been presented with the badge. </p>
                 <br />
 
-                <ViewApprovals CurrentProfile="@profile" ApprovalsPredicate="@IsAward" />
+                <ViewApprovals CurrentProfile="@profile" ApprovalsAccessor="@GetPendingAwards" />
             </MudTabPanel>
-            @* <MudTabPanel Text="Finalised">
-                <h1>Finalised Awards</h1>
+            <MudTabPanel Text="Finalised">
+                <h1>Finalised Approvals</h1>
                 <p>These are the submissions for @profile.Unit!.Name that have been approved and awarded recently by the Unit Council.</p>
                 <br />
-            </MudTabPanel> *@
+                @* TODO finalised should distinguish between those that have been approved v rejected *@
+
+                <ViewApprovals CurrentProfile="@profile" ApprovalsAccessor="@GetFinalisedApprovals" IsReadOnly="true" />
+            </MudTabPanel>
         </MudTabs>;
     }
 }

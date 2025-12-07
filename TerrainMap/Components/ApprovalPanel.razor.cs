@@ -8,7 +8,7 @@ using TerrainMap.Services.Interface;
 
 namespace TerrainMap.Components;
 
-public partial class PendingApprovalPanel : ComponentBase
+public partial class ApprovalPanel : ComponentBase
 {
     [Inject]
     public required ITerrainApprovalService TerrainApprovalService { get; set; }
@@ -29,6 +29,9 @@ public partial class PendingApprovalPanel : ComponentBase
     [Parameter]
     [EditorRequired]
     public required Profile CurrentProfile { get; init; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
 
     Achievement Achievement = null!;
 
@@ -57,7 +60,7 @@ public partial class PendingApprovalPanel : ComponentBase
         => ImproveCount == 1 ? "improve" : "improves";
 
     bool CanActionApproval
-        => !SubmittedByCurrentUser && !AlreadyActionedByCurrentUser;
+        => !SubmittedByCurrentUser && !AlreadyActionedByCurrentUser && !IsReadOnly;
 
     bool SubmittedByCurrentUser
         => Approval.Member.Id == CurrentProfile.Member.Id;
@@ -80,9 +83,9 @@ public partial class PendingApprovalPanel : ComponentBase
     {
         var continueAction = await ShowCommentDialog(true);
 
-        if (continueAction)
+        if (continueAction && !IsReadOnly)
         {
-             await TerrainAchievementService.ApproveSubmission(Approval.Submission, comment);
+            await TerrainAchievementService.ApproveSubmission(Approval.Submission, comment);
             actionedByCurrentUser = true;
         }
     }
@@ -91,9 +94,9 @@ public partial class PendingApprovalPanel : ComponentBase
     {
         var continueAction = await ShowCommentDialog(false);
 
-        if (continueAction)
+        if (continueAction && !IsReadOnly)
         {
-             await TerrainAchievementService.ImproveSubmission(Approval.Submission, comment);
+            await TerrainAchievementService.ImproveSubmission(Approval.Submission, comment);
             actionedByCurrentUser = true;
         }
     }

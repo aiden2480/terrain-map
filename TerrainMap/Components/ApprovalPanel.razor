@@ -24,7 +24,11 @@
                 </div>
             }
 
-            if (CanActionApproval)
+            if (IsReadOnly)
+            {
+                // No need to put anything here
+            }
+            else if (CanActionApproval)
             {
                 <div class="action-buttons-div mt-1">
                     <MudTextField Label="Add optional comment"

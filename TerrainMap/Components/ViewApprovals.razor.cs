@@ -20,14 +20,18 @@ public partial class ViewApprovals : ComponentBase
 
     [Parameter]
     [EditorRequired]
-    public required Func<Approval, bool> ApprovalsPredicate { get; init; }
+    public required Func<Unit, Task<IEnumerable<Approval>>> ApprovalsAccessor { get; init; }
+
+    [Parameter]
+    public bool IsReadOnly { get; init; }
 
     private IEnumerable<Approval>? approvals;
 
     protected override async Task OnInitializedAsync()
     {
-        approvals = (await TerrainApprovalService.GetPendingApprovals(CurrentProfile.Unit!.Id))
-            .Where(ApprovalsPredicate)
-            .OrderBy(a => a.Submission.Date);
+        var allApprovals = await ApprovalsAccessor.Invoke(CurrentProfile.Unit!);
+
+        // 30 results is plenty, we're not trying to crash the browser here
+        approvals = allApprovals.Take(30);
     }
 }

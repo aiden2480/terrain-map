@@ -10,7 +10,7 @@
         }
         else
         {
-            <MudExpansionPanel Text="There are no pending submissions" Disabled HideIcon />
+            <MudExpansionPanel Text="There are no submissions" Disabled HideIcon />
         }
     </MudExpansionPanels>
 }
@@ -26,7 +26,7 @@ else
         => approval.Submission.Type switch
         {
             "award" => @<PendingAwardPanel Approval="@approval" />,
-            "review" or "approval" => @<PendingApprovalPanel CurrentProfile="@CurrentProfile" Approval="@approval" />,
+            "review" or "approval" => @<ApprovalPanel CurrentProfile="@CurrentProfile" Approval="@approval" IsReadOnly="@IsReadOnly" />,
             _ => throw new ArgumentException($"Unknown submission type {approval.Submission.Type}")
         };
 }

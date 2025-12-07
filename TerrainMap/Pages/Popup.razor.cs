@@ -1,5 +1,6 @@
 ﻿using Blazor.BrowserExtension.Pages;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,5 +37,33 @@ public partial class Popup : BasePage
         }
 
         return profiles;
+    }
+
+    async Task<IEnumerable<Approval>> GetPendingApprovals(Unit unit)
+    {
+        var pending = await TerrainApprovalService.GetPendingApprovals(unit.Id);
+
+        return pending
+            .Where(a => a.Submission.Type == "approval" || a.Submission.Type == "review")
+            .OrderBy(a => a.Submission.Date);
+    }
+
+    async Task<IEnumerable<Approval>> GetPendingAwards(Unit unit)
+    {
+        var pending = await TerrainApprovalService.GetPendingApprovals(unit.Id);
+
+        return pending
+            .Where(a => a.Submission.Type == "award")
+            .OrderBy(a => a.Submission.Date);
+    }
+
+    async Task<IEnumerable<Approval>> GetFinalisedApprovals(Unit unit)
+    {
+        var finalised = await TerrainApprovalService.GetFinalisedApprovals(unit.Id);
+
+        return finalised
+            .Where(a => a.Submission.Type == "approval" || a.Submission.Type == "review")
+            .Where(a => a.Submission.Date >= DateTime.UtcNow.AddDays(-90))
+            .OrderByDescending(a => a.Submission.Date);
     }
 }
