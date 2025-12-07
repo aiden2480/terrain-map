@@ -27,23 +27,22 @@
         return @<MudTabs PanelClass="pa-3" Centered="true" MinimumTabWidth="calc(round(down, calc(425px / 3), 1px) - 1px)">
             <MudTabPanel Text="Approvals">
                 <h1>Pending Approvals</h1>
-                <p>Review the pending submissions for @profile.Unit!.Name and mark each one Approve or Improve. Any submission shown with a dot can be actioned by you.</p>
+                <p>Review the pending submissions for @profile.Unit!.Name and mark each one Approve or Improve. Any submission shown with a badge can be actioned by you.</p>
                 <br />
 
                 <ViewApprovals CurrentProfile="@profile" ApprovalsAccessor="@GetPendingApprovals" />
             </MudTabPanel>
             <MudTabPanel Text="Awards">
                 <h1>Pending Awards</h1>
-                <p>Currently pending awards for @profile.Unit!.Name. These submissions have been approved by the unit council, but the youth member has not been presented with the badge. </p>
+                <p>Currently pending awards for @profile.Unit!.Name. These submissions have been approved by the unit council, but the youth member has not been presented with the physical badge. </p>
                 <br />
 
                 <ViewApprovals CurrentProfile="@profile" ApprovalsAccessor="@GetPendingAwards" />
             </MudTabPanel>
             <MudTabPanel Text="Finalised">
                 <h1>Finalised Approvals</h1>
-                <p>These are the submissions for @profile.Unit!.Name that have been approved and awarded recently by the Unit Council.</p>
+                <p>These are the submissions for @profile.Unit!.Name that have been approved and awarded recently by the Unit Council. The colour of the badge indicates the outcome of the submission.</p>
                 <br />
-                @* TODO finalised should distinguish between those that have been approved v rejected *@
 
                 <ViewApprovals CurrentProfile="@profile" ApprovalsAccessor="@GetFinalisedApprovals" IsReadOnly="true" />
             </MudTabPanel>

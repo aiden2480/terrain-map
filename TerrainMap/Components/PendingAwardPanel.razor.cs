@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using System;
 using System.Threading.Tasks;
 using TerrainMap.Models;
@@ -24,6 +25,9 @@ public partial class PendingAwardPanel : ComponentBase
 
     string PanelText
         => $"{Approval.Member.FirstName}'s {TerrainApprovalService.GetApprovalDescriptionAndSvg(Approval).Description} Award";
+
+    // TODO validation to stop them trying to award their own? is that allowed idk
+    Color? BadgeColor => submitted ? null : Color.Warning;
 
     async Task Submit()
     {

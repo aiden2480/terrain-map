@@ -3,9 +3,9 @@
 <div class="d-flex">
     <MudText Class="mt-1">@PanelTitle</MudText>
 
-    <MudBadge Color="Color.Secondary"
+    <MudBadge Color="@BadgeColor.GetValueOrDefault()"
               Class="d-flex ml-auto"
-              Visible="@BadgeVisible"
+              Visible="@Visible"
               Overlap Bordered>
         <MudIcon Style="@GetPanelIconStyle()" />
     </MudBadge>
@@ -22,7 +22,9 @@
 
     [Parameter]
     [EditorRequired]
-    public required bool BadgeVisible { get; init; }
+    public required Color? BadgeColor { get; init; }
+
+    bool Visible => BadgeColor != null;
 
     string GetPanelIconStyle()
     {

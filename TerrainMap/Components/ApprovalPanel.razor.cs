@@ -70,6 +70,17 @@ public partial class ApprovalPanel : ComponentBase
              .Select(a => a.Id)
              .Contains(CurrentProfile.Member.Id);
 
+    Color? BadgeColor()
+    {
+        if (CanActionApproval) return Color.Warning;
+        if (IsReadOnly && Approval.Submission.Outcome is SubmissionOutcome outcome)
+        {
+            return outcome == SubmissionOutcome.Approved ? Color.Success : Color.Error;
+        }
+
+        return null;
+    }
+
     async Task ExpandedChanged(bool isOpen)
     {
         if (isOpen && !DataIsLoaded)
