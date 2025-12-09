@@ -10,7 +10,7 @@ public interface IStorageService
     /// Checks that the user is authenticated by validating and reauthenticating the refresh token.
     /// If reauthentication fails, clears storage data since we know it's invalid.
     /// </summary>
-    Task<bool> IsAuthenticated();
+    Task<bool> EnsureAuthenticated(bool andValidateRefreshToken);
 
     /// <returns>The current user's access token. Ensure the user <see cref="IsAuthenticated"/> before invoking</returns>
     Task<string> GetAccessToken();
@@ -25,7 +25,7 @@ public interface IStorageService
     /// <param name="loginApiResponse">The API response. Must contain refresh token</param>
     Task UpdateFromLoginApiResponse(LoginApiResponse loginApiResponse);
 
-    Task<IEnumerable<Profile>?> GetProfilesFromStorage();
+    Task<IEnumerable<Profile>> GetUnitCouncilProfilesFromStorage();
 
     Task SetProfiles(IEnumerable<Profile> profiles);
 }

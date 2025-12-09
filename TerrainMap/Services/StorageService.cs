@@ -11,14 +11,22 @@ namespace TerrainMap.Services;
 
 public class StorageService(ITerrainAuthService terrainAuthService, IWebExtensionsApi webExtensions) : IStorageService
 {
-    public async Task<bool> IsAuthenticated()
+    public async Task<bool> EnsureAuthenticated(bool andValidateRefreshToken)
     {
         var modelFromStorage = await GetModelFromStorage();
 
         // If there's nothing in the storage already, we are definitely not authenticated
-        if (modelFromStorage.RefreshToken is null)
+        if (modelFromStorage is null || modelFromStorage.RefreshToken is null)
         {
+            await ClearModel();
             return false;
+        }
+
+        // To increase popup loading time, only validate the refresh token on background startup
+        // If we are invoking from the popup, assume that if the refresh token exists, it's valid.
+        if (!andValidateRefreshToken)
+        {
+            return true;
         }
 
         // The only way to verify the refresh token is still valid is to send a request with it
@@ -57,13 +65,18 @@ public class StorageService(ITerrainAuthService terrainAuthService, IWebExtensio
         await UpdateModel(model);
     }
 
-    public async Task<IEnumerable<Profile>?> GetProfilesFromStorage()
+    public async Task<IEnumerable<Profile>> GetUnitCouncilProfilesFromStorage()
     {
         var model = await GetModelFromStorage();
 
-        return (model.Profiles is not null && model.ProfilesExpire is not null && model.ProfilesExpire > DateTime.Now)
-            ? model.Profiles
-            : null;
+        if (model.Profiles is null || model.ProfilesExpire is null || model.ProfilesExpire <= DateTime.Now)
+        {
+            return [];
+        }
+
+        return model.Profiles
+            .Where(p => p.Unit is not null)
+            .Where(p => p.Unit!.Roles.Contains("unit-council"));
     }
 
     public async Task SetProfiles(IEnumerable<Profile> profiles)

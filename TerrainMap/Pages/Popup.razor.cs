@@ -22,15 +22,13 @@ public partial class Popup : BasePage
 
     async Task<Profile?> GetFirstProfileInUnitCouncil(bool forceRefreshCache = false)
         => (await GetProfiles(forceRefreshCache))
-            .Where(p => p.Unit is not null)
-            .Where(p => p.Unit!.Roles.Contains("unit-council"))
             .FirstOrDefault();
 
     async Task<IEnumerable<Profile>> GetProfiles(bool forceRefreshCache)
     {
-        var profiles = await StorageService.GetProfilesFromStorage();
+        var profiles = await StorageService.GetUnitCouncilProfilesFromStorage();
 
-        if (profiles is null || forceRefreshCache)
+        if (!profiles.Any() || forceRefreshCache)
         {
             profiles = await TerrainProfileService.GetProfiles();
             await StorageService.SetProfiles(profiles);

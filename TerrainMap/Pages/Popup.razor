@@ -11,7 +11,7 @@
 
     async Task<RenderFragment> GetPopupFragment()
     {
-        if (!await StorageService.IsAuthenticated())
+        if (!await StorageService.EnsureAuthenticated(andValidateRefreshToken: false))
         {
             return @<div style="padding: 15px">
                 <Login OnLoginSuccess="OnInitializedAsync" />
