@@ -13,7 +13,9 @@
     {
         if (!await StorageService.IsAuthenticated())
         {
-            return @<Login OnLoginSuccess="OnInitializedAsync" />;
+            return @<div style="padding: 15px">
+                <Login OnLoginSuccess="OnInitializedAsync" />
+            </div>;
         }
 
         // Attempt to get an applicable profile. If none exist, refresh cache, and try again
@@ -41,7 +43,7 @@
             </MudTabPanel>
             <MudTabPanel Text="Finalised">
                 <h1>Finalised Approvals</h1>
-                <p>These are the submissions for @profile.Unit!.Name that have been approved and awarded recently by the Unit Council. The colour of the badge indicates the outcome of the submission.</p>
+                <p>These are the submissions for @profile.Unit!.Name that have been approved or rejected recently by the Unit Council. The colour of the badge indicates the outcome of the submission.</p>
                 <br />
 
                 <ViewApprovals CurrentProfile="@profile" ApprovalsAccessor="@GetFinalisedApprovals" IsReadOnly="true" />
